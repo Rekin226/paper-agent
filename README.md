@@ -18,6 +18,8 @@
 
 ## ✨ Overview
 
+Most LLM writing tools are general-purpose and produce text that reviewers immediately recognise as AI-generated. `paper-agent` is purpose-built for hydrology and water-resources peer review: it enforces journal-specific structure, refuses to fabricate citations, and surfaces consistency failures — gap-vs-conclusions mismatches, sample-size drift, terminology inconsistency — that authors and reviewers routinely miss.
+
 `paper-agent` runs in your local Claude Code session and produces journal-submission-quality output. It is not a writing assistant in the usual sense — it follows strict mode boundaries, refuses to invent values or fabricate citations, and pauses for confirmation after every section.
 
 Use it when you have:
