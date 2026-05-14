@@ -145,6 +145,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for issue and PR guidelines, plus instruc
 
 [MIT](LICENSE) — see the LICENSE file for the full text.
 
+## 📚 Citation & background
+
+Built by [Ouédraogo Abdoul Rachid](https://scholar.google.com/citations?user=AFrUnG0AAAAJ), Postdoctoral Researcher at National Central University and Adjunct Lecturer at Feng Chia University. Designed alongside research on gray-box groundwater modeling for the Zhuoshui Alluvial Fan, Taiwan (accepted, *Hydrogeology Journal*).
+
 ---
 
 <div align="center">
