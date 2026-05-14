@@ -99,6 +99,12 @@ for submission or still needs work.>
 
 The test for whether an edit is in-scope: **can you describe the change without referring to anything outside the sentence itself?**
 
+**Even within scope, never invent content.** A "clarity fix" that adds a fact not present in the original is fabrication, not proofreading. Read `references/anti-fabrication.md`. Specifically:
+- Do not add specific numbers, units, or values to vague sentences. "The model performed well" stays as is, or gets flagged for Revise. It does not become "The model achieved R² = 0.74" unless the source sentence already contained that number.
+- Do not add citations to unsourced claims. Flag them.
+- Do not "complete" abbreviations or terms by guessing what they stand for. Flag them.
+- Do not "fix" equations by adding missing terms based on guessing what the author meant. Flag them.
+
 - ✓ "Changed 'We present' to 'This study presents' to remove first-person pronoun" — in-scope, describable at sentence level.
 - ✓ "Changed 'ground water' to 'groundwater' per HJ terminology" — in-scope.
 - ✓ "Split a 48-word sentence into two for clarity, preserving both clauses verbatim" — in-scope.

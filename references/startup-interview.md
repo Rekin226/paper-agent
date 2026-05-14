@@ -12,12 +12,14 @@ Ask the user exactly this:
 > 2. **Review** — read an existing .docx manuscript and give reviewer-style feedback
 > 3. **Revise** — read an existing .docx manuscript and suggest section-by-section revisions (with or without reviewer comments)
 > 4. **Proofread** — read an existing .docx manuscript and produce a language-level polish (no scientific restructuring)
+> 5. **Audit** — read an existing .docx manuscript and report consistency and coherence issues across sections (numerical, terminological, cross-reference, argument-chain). Output is a severity-tagged report; the user fixes issues via Revise mode.
 
 Based on the answer, load the corresponding mode reference file immediately:
 - Draft → stay in SKILL.md body (no extra file needed)
 - Review → `references/mode-review.md`
 - Revise → `references/mode-revise.md`
 - Proofread → `references/mode-proofread.md`
+- Audit → `references/mode-audit.md`
 
 **Do not proceed to Block 1 until the mode is confirmed.**
 
@@ -29,7 +31,7 @@ Based on the answer, load the corresponding mode reference file immediately:
 > 2. **Journal of Hydrology: Regional Studies** (Elsevier) — `jhrs`
 > 3. Something else — please paste the author guidelines or pick the closest match above.
 
-Load either `references/journal-hydrogeology.md` or `references/journal-jhrs.md` and keep it in mind throughout the session. All four modes need the journal style: Draft uses it for writing, Review and Revise use it to check compliance, Proofread uses it for terminology rules.
+Load either `references/journal-hydrogeology.md` or `references/journal-jhrs.md` and keep it in mind throughout the session. All five modes need the journal style: Draft uses it for writing, Review and Revise use it to check compliance, Proofread uses it for terminology rules, Audit uses it for journal-specific consistency checks.
 
 ---
 
@@ -94,9 +96,9 @@ Cache the complete list — every item goes verbatim into the Limitations subsec
 
 ---
 
-## Non-Draft path (Review, Revise, Proofread)
+## Non-Draft path (Review, Revise, Proofread, Audit)
 
-If mode is Review, Revise, or Proofread, replace Blocks 2–5 with the following:
+If mode is Review, Revise, Proofread, or Audit, replace Blocks 2–5 with the following:
 
 ### Block 2′ — Manuscript file path
 
@@ -122,6 +124,9 @@ If the user pastes reviewer comments, number them sequentially and cache them. E
 
 **If mode = Proofread:** Ask the user:
 > Proofread scope: (a) language only — grammar, clarity, conciseness, (b) language + journal style compliance (terminology, abbreviations, citation format, equation formatting), (c) language + style + reference list verification. Default: (b).
+
+**If mode = Audit:** Ask the user:
+> Audit scope: (a) full audit — all 8 checks (coherence chain, numerical, terminological, cross-reference, argument honesty, tense, citation usage, JHRS Highlights/Abstract if applicable), (b) consistency only — skip the argument-chain check, run only the mechanical consistency checks (numerical, terminological, cross-reference, tense, citation), (c) coherence only — focus on the argument-chain check and skip mechanical consistency. Default: (a). Full audit is slower but the argument-chain check is where the most damaging issues hide.
 
 ---
 

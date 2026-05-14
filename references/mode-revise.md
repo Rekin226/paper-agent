@@ -2,6 +2,8 @@
 
 Read an existing manuscript and propose section-by-section revisions **in chat**, using BEFORE / AFTER / RATIONALE blocks. The user applies the changes themselves (or pastes them into tracked-changes in Word / Cowork). This mode does **not** edit the .docx file directly.
 
+**Apply `references/anti-fabrication.md` rigorously in this mode.** Every AFTER block must be defensible to a reviewer. If a proposed revision needs a number, the number must come from cached project data or the manuscript itself, not be invented. If a proposed revision needs a citation, resolve it via Semantic Scholar first. If a reviewer comment requests information the agent cannot verify, propose text the author must complete (with a `[FROM USER]` or `[VALUE NEEDED]` placeholder), not invented content.
+
 ## Philosophy
 
 Revise mode has one of two drivers:

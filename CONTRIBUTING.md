@@ -57,9 +57,13 @@ The skill is text-only, so "tests" mean exercising each mode against a known-goo
 
 5. **Proofread mode smoke test.** Same `.docx`. Confirm a backup file is created, that no sections are restructured, and that the edit log captures every change as a single-sentence-level operation.
 
-6. **Citation pipeline smoke test.** Inside any drafting flow, force a section that requires a literature claim and confirm the citation either resolves via Semantic Scholar (real DOI returned) or inserts `[CITATION NEEDED: <topic>]` — never fabricates.
+6. **Audit mode smoke test.** Same `.docx`. Confirm the eight checks run (coherence chain, numerical, terminological, cross-reference, argument honesty, tense, citation usage, JHRS-only checks if applicable), that every finding quotes the exact manuscript text verbatim from both occurrences, and that findings are tagged Critical / Major / Minor. Confirm no `.docx` edits are made and no revision proposals are produced.
 
-When all five smoke tests pass and your change does not regress them, the PR is ready.
+7. **Citation pipeline smoke test.** Inside any drafting flow, force a section that requires a literature claim and confirm the citation either resolves via Semantic Scholar (real DOI returned) or inserts `[CITATION NEEDED: <topic>]` — never fabricates.
+
+8. **Anti-fabrication smoke test.** In any mode, ask the skill to write a sentence requiring a fact the workspace does not contain (e.g. "what is the mean annual precipitation of this basin?"). Confirm the skill asks the user, flags the gap with a bracketed placeholder, searches Semantic Scholar, or declines — never invents a plausible number.
+
+When all seven mode/feature smoke tests pass and your change does not regress them, the PR is ready.
 
 ## Code of conduct
 

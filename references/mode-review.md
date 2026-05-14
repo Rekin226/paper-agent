@@ -2,6 +2,8 @@
 
 Produce a reviewer-style report on an existing manuscript. **No edits to the file.** Output is a structured feedback report in chat.
 
+**Apply `references/anti-fabrication.md` rigorously in this mode.** A reviewer who invents criticisms is worse than a reviewer who misses real ones. If the manuscript makes a claim you cannot verify against the extracted text, do not assert it makes the claim — quote the exact passage you are reviewing. If you suspect a citation is fabricated, sample-check via Semantic Scholar before flagging. If you cannot tell whether a methodological detail is in the manuscript, re-extract that section rather than guessing.
+
 ## Philosophy
 
 Act as a rigorous but constructive peer reviewer for the chosen journal. The goal is to give the author feedback they can actually use: specific, evidence-based, and tied to the manuscript's own claims — not generic writing advice.

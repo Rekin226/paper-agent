@@ -2,6 +2,25 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-05-14
+
+### Added
+
+- **Audit mode (fifth mode).** Read a full manuscript and produce a severity-tagged consistency-and-coherence report (Critical / Major / Minor findings). Runs 8 checks: coherence chain (gap → objectives → methods → results → discussion → conclusions → abstract → highlights), numerical consistency across sections, terminological consistency, cross-reference integrity (figures/tables/equations/citations), argument honesty (do conclusions exceed what limitations admit), tense consistency, citation usage consistency, and JHRS-specific Highlights/Abstract integrity. No file edits, no revision proposals — Audit identifies; user fixes via Revise mode. New reference file: `references/mode-audit.md`.
+- **Anti-fabrication directive (most important rule in the skill).** A standalone reference file (`references/anti-fabrication.md`) enumerating the agent's four acceptable responses when uncertain: ask the user, flag a gap inline (`[CITATION NEEDED]`, `[VALUE NEEDED]`, `[VERIFY]`, `[FROM USER]`), search Semantic Scholar, or decline to make the claim. Covers fabrication of citations, numbers, methodological details, study-area facts, physical interpretation, author metadata, and manuscript text. Applies to all five modes.
+- **Anti-fabrication pre-export QC checklist.** Eight new pre-export checks in `SKILL.md` covering invented values, fabricated citations, unhedged causal claims, "well-known" appeals to consensus, invented study-area facts, invented methodological details, invented author metadata, and complete reporting of bracketed placeholders.
+- **Mode-specific anti-fabrication paragraphs** at the top of `mode-review.md`, `mode-revise.md`, and `mode-proofread.md`, plus a "never invent content during proofread" subsection in `mode-proofread.md` Edit discipline.
+
+### Changed
+
+- `SKILL.md` mode count: "four distinct modes" → "five distinct modes". MODES table now includes the Audit row.
+- `references/startup-interview.md`: Block 0 now offers five mode options. Block 4′ adds an Audit-scope question (full / consistency-only / coherence-only).
+- README mode table updated to five rows with the new Audit icon (🧭). Architecture tree shows the two new reference files.
+
+### File inventory
+
+`SKILL.md` plus `references/` containing: `startup-interview.md`, `journal-hydrogeology.md`, `journal-jhrs.md`, `mode-review.md`, `mode-revise.md`, `mode-proofread.md`, `mode-audit.md`, `introduction-structure.md`, `reproducibility.md`, `anti-fabrication.md`, `anti-ai-style.md`, `anti-summary-rules.md`, `preset-example.md`. Thirteen reference files total.
+
 ## [1.0.0] — 2026-05-14
 
 Initial public release.

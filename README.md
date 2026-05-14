@@ -9,7 +9,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-*Drafts, reviews, revises, and proofreads manuscripts for*  
+*Drafts, reviews, revises, proofreads, and audits manuscripts for*  
 **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies**
 
 </div>
@@ -34,6 +34,7 @@ Use it when you have:
 | 👀 | **Review** | Existing `.docx` manuscript | Structured reviewer report in chat (no file edits) |
 | 🔄 | **Revise** | Existing `.docx` + optional reviewer comments | Section-by-section BEFORE / AFTER / RATIONALE suggestions in chat (you apply them), plus a response-to-reviewers letter when reviewer comments are provided |
 | 🔍 | **Proofread** | Existing `.docx` manuscript | Revised `.docx` with language-level fixes only — no scientific changes, no restructuring, no new citations |
+| 🧭 | **Audit** | Existing `.docx` manuscript | Consistency and coherence report in chat with severity-tagged findings (Critical / Major / Minor). Catches gap-vs-conclusions mismatches, sample-size inconsistencies, broken cross-references, terminology drift, argument honesty conflicts |
 
 The user selects one mode at session start. Each mode has its own reference file under `references/` with the exact protocol, allowed/forbidden operations, and output format.
 
@@ -94,8 +95,10 @@ paper-agent/
     ├── mode-review.md               # Review-mode report format
     ├── mode-revise.md               # Revise-mode BEFORE/AFTER protocol
     ├── mode-proofread.md            # Proofread-mode allowed scope
+    ├── mode-audit.md                # Audit-mode 8-check protocol
     ├── introduction-structure.md    # five-move funnel for Introductions
     ├── reproducibility.md           # Methods replicability, back matter
+    ├── anti-fabrication.md          # ask, flag, search, or decline — never invent
     ├── anti-ai-style.md             # patterns reviewers recognise as AI
     ├── anti-summary-rules.md        # write prose, not outlines
     └── preset-example.md            # project-preset template

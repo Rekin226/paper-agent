@@ -14,7 +14,7 @@ Never produce outlines, summaries, or bullet-point drafts in Draft mode. Every D
 
 ## MODES
 
-This skill supports four distinct modes. The user selects one at startup (Block 0 of the interview). Each mode has its own reference file with specific workflow, output format, and boundaries.
+This skill supports five distinct modes. The user selects one at startup (Block 0 of the interview). Each mode has its own reference file with specific workflow, output format, and boundaries.
 
 | Mode | Input | Output | Reference file |
 |---|---|---|---|
@@ -22,10 +22,15 @@ This skill supports four distinct modes. The user selects one at startup (Block 
 | **Review** | Existing .docx manuscript | Reviewer-style feedback report in chat (no file edits) | `references/mode-review.md` |
 | **Revise** | Existing .docx + optional reviewer comments | Section-by-section revision suggestions in chat (BEFORE / AFTER / RATIONALE blocks). Never edits the .docx file directly — user applies changes themselves. | `references/mode-revise.md` |
 | **Proofread** | Existing .docx manuscript | Revised .docx with language-level fixes only. No scientific changes, no restructuring, no new citations. | `references/mode-proofread.md` |
+| **Audit** | Existing .docx manuscript | Consistency and coherence report in chat with severity-tagged findings (Critical / Major / Minor). No edits, no revision proposals — identifies issues for the user to fix via Revise mode. | `references/mode-audit.md` |
 
 **Mode determines what is allowed.** Once a mode is selected, re-read the relevant reference file to understand the specific protocol. Do not mix mode behaviours — e.g. Proofread must not restructure sections; Revise must not silently edit the .docx file; Review must not rewrite paragraphs.
 
 ---
+
+## ANTI-FABRICATION DIRECTIVE — read `references/anti-fabrication.md` before any work.
+
+This is the most important rule in the skill. If the agent does not know something with confidence, it asks the user, flags the gap, searches Semantic Scholar, or declines to make the claim. It never fills in a plausible-sounding answer. Applies to citations, numbers, study area facts, methodological details, physical interpretations, author metadata, and manuscript content read from existing files. The rules file enumerates the specific failure modes and the four acceptable responses.
 
 ## ANTI-SUMMARY DIRECTIVE — read `references/anti-summary-rules.md` before writing any section.
 
@@ -41,7 +46,7 @@ Manuscripts written by AI tend to give themselves away through stylistic tells: 
 
 Run once per session, before any writing or review. Follow `references/startup-interview.md` verbatim — it contains the exact questions, mode-specific branches, and fast-path rules.
 
-**Block 0 — Mode selection (always first).** Ask which mode the user wants: Draft, Review, Revise, or Proofread. Load the corresponding reference file immediately.
+**Block 0 — Mode selection (always first).** Ask which mode the user wants: Draft, Review, Revise, Proofread, or Audit. Load the corresponding reference file immediately.
 
 **Block 1 — Journal target** (all modes). Load `references/journal-hydrogeology.md` or `references/journal-jhrs.md` based on the answer. The journal style matters for Review (is the manuscript HJ-compliant?), Revise (do the edits match journal style?), and Proofread (what terminology rules to enforce?), not just Draft.
 
@@ -88,6 +93,7 @@ The sections from here down (Citation workflow, Pause protocol, Section content 
 - Review → `references/mode-review.md`
 - Revise → `references/mode-revise.md`
 - Proofread → `references/mode-proofread.md`
+- Audit → `references/mode-audit.md`
 
 The **Figure necessity assessment** (further down) applies to all modes — Review checks whether existing figures earn their place, Revise can recommend cutting them, Draft gates new ones.
 
@@ -160,6 +166,16 @@ Generic guidance that applies to both supported journals:
 ## PRE-EXPORT QUALITY CONTROL
 
 Before generating the .docx, verify every item below. Fix or flag any failure.
+
+**Anti-fabrication** (per `references/anti-fabrication.md`)
+- [ ] Every numerical claim traces to a cached file, figure, or user-supplied fact (no invented values, sample sizes, units, or precision)
+- [ ] Every citation was resolved via Semantic Scholar (no fabricated references, DOIs, or author names)
+- [ ] Every causal or mechanistic claim has either a citation or an explicit hedge ("may", "one possible interpretation", "we hypothesize")
+- [ ] No "well-known", "established", or "previous studies have shown" without a real citation
+- [ ] No invented study-area facts (basin area, climate, geology) — all sourced or supplied
+- [ ] No invented software versions, parameter rationales, random seeds, or calibration/validation splits beyond what the source code shows
+- [ ] No invented author metadata (affiliations, ORCIDs, emails, CRediT roles, funding details)
+- [ ] All bracketed placeholders ([CITATION NEEDED], [VALUE NEEDED], [VERIFY], [FROM USER]) are listed for the user
 
 **Content accuracy**
 - [ ] Every equation matches the cached source file (no invented terms)
@@ -279,6 +295,7 @@ Do not generate plotting code. Provide specifications only.
 
 ## REFERENCE FILES IN THIS SKILL
 
+- `references/anti-fabrication.md` — when in doubt, ask or flag, never invent. The most important rule in the skill. Read before any work in any mode.
 - `references/anti-summary-rules.md` — write prose not outlines. Read before every Draft-mode writing session and before any Revise-mode proposed revision.
 - `references/anti-ai-style.md` — write like a human, not like an AI. Read before every Draft-mode and Revise-mode writing session, and consulted by Proofread mode for compliance checks.
 - `references/introduction-structure.md` — the five-move funnel for Introduction sections (broad significance → narrowing review → gap → objectives → roadmap). Read before drafting or revising any Introduction.
@@ -290,5 +307,6 @@ Do not generate plotting code. Provide specifications only.
 - `references/mode-review.md` — Review mode: reviewer feedback rubric and report format.
 - `references/mode-revise.md` — Revise mode: section-by-section suggestion format, reviewer-comment mapping, response letter drafting.
 - `references/mode-proofread.md` — Proofread mode: allowed/forbidden edit scope, language and style compliance pass.
+- `references/mode-audit.md` — Audit mode: end-to-end consistency and coherence checks across the manuscript, severity-tagged report.
 
 Read reference files lazily, only loading what the current mode and session need.
