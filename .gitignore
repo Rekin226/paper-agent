@@ -1,0 +1,42 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.secret
+*.key
+credentials.json
+
+# Personal / project-private content (see .local/README.md)
+.local/*
+!.local/README.md
+
+# Skill output and working files
+*.docx
+*.doc
+*_proofread_backup.docx
+workspace/
+output/
+.cache/
+
+# Editor and IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*

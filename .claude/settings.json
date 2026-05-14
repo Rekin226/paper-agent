@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "semantic-scholar"
+  ],
+  "enableAllProjectMcpServers": true
+}
