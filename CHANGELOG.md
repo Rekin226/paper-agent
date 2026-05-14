@@ -2,6 +2,15 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] — 2026-05-14
+
+### Changed
+
+- README repositioned: the skill ships *with profiles for* HJ and JHRS rather than being scoped to them. Most of the skill (anti-fabrication, anti-AI-style, Introduction funnel, Audit mode, reproducibility standard) is journal-agnostic; only the two journal style files are journal-specific.
+- New README subsection **"Extending to other journals"** documenting the three-step process for adding a new journal profile.
+- CONTRIBUTING promotes new-journal PRs to a top-priority callout with a list of high-impact target journals (WRR, Journal of Hydrology, HESS, WRM, Hydrological Processes, Groundwater).
+- Version badge bumped to 1.1.1.
+
 ## [1.1.0] — 2026-05-14
 
 ### Added

@@ -5,12 +5,12 @@
 **Journal-quality hydrology manuscripts, drafted and reviewed by Claude.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.1-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-*Drafts, reviews, revises, proofreads, and audits manuscripts for*  
-**Hydrogeology Journal** • **Journal of Hydrology: Regional Studies**
+*Drafts, reviews, revises, proofreads, and audits hydrology and water-resources manuscripts.*  
+*Ships with style profiles for* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *— extensible to others via a single reference file.*
 
 </div>
 
@@ -122,6 +122,16 @@ If you work on the same project repeatedly, define a project preset to skip the 
 1. Copy `references/preset-example.md` to `references/preset-<your-project>.md` (or to `.local/preset-<your-project>.md` if you want to keep it private — see `.local/README.md` for the symlink workflow).
 2. Fill in the placeholders: detection-trigger filename, data file paths, fixed project facts, mandatory limitations, Semantic Scholar search queries.
 3. Whenever `paper-agent` starts in Draft mode, it scans `references/preset-*.md` and auto-loads any preset whose trigger file exists in your workspace.
+
+### Extending to other journals
+
+The skill currently ships with style profiles for two journals (HJ and JHRS), but most of its value is journal-agnostic: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any hydrology or water-resources manuscript. To target a different journal:
+
+1. Copy `references/journal-hydrogeology.md` to `references/journal-<your-journal>.md`.
+2. Adapt the citation format, abstract structure, equation conventions, and pre-submission checklist to match the journal's author guidelines.
+3. Add the new option to Block 1 of `references/startup-interview.md` so the skill can offer it at session start.
+
+PRs adding journal profiles for *Water Resources Research*, *Journal of Hydrology*, *Hydrology and Earth System Sciences*, *Water Resources Management*, and similar venues are explicitly welcomed — see `CONTRIBUTING.md`.
 
 ### MCP servers
 

@@ -24,9 +24,20 @@ Please redact personal data, manuscript IDs, and unpublished results before post
 
 ### Good PR ideas
 
-- New journal style file (Water Resources Research, Journal of Hydrology, HESS, etc.) following the structure of `references/journal-hydrogeology.md`.
+**Top priority: new journal style profiles.** The skill currently ships with HJ and JHRS but is built to extend cleanly. A new profile is one file: `references/journal-<name>.md` following the structure of `references/journal-hydrogeology.md`, plus one line added to Block 1 of `references/startup-interview.md`. Highest-impact additions:
+
+- *Water Resources Research* (AGU) — author-year, structured abstract
+- *Journal of Hydrology* (Elsevier) — similar to JHRS but unstructured abstract
+- *Hydrology and Earth System Sciences (HESS)* (Copernicus, open access)
+- *Water Resources Management* (Springer)
+- *Hydrological Processes* (Wiley)
+- *Groundwater* (NGWA)
+
+Other good PRs:
+
 - Additional `references/preset-<project>.md` templates for common project archetypes (catchment rainfall-runoff, aquifer water-balance, isotope tracer studies, …) — kept generic, no real data.
-- Tightening or expanding the anti-AI-style checklist as reviewer-recognised patterns evolve.
+- Tightening or expanding the anti-AI-style or anti-fabrication checklists as reviewer-recognised patterns evolve.
+- Additional Audit-mode checks (e.g. unit-balance verification in equations, parameter-symbol consistency across body and tables).
 - Bug fixes for mode-boundary violations.
 
 ### PR ideas that need discussion first
