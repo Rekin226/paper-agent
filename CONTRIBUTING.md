@@ -17,7 +17,7 @@ Please redact personal data, manuscript IDs, and unpublished results before post
 ## Submitting pull requests
 
 1. **One concern per PR.** A PR that adds a new journal profile should not also rewrite the anti-AI-style rules. Small, focused changes review faster and are less likely to introduce regressions.
-2. **Preserve mode boundaries.** Each of the four modes has a precise scope (see the `references/mode-*.md` files). Do not expand Proofread to restructure paragraphs, do not let Revise silently edit `.docx` files, etc.
+2. **Preserve mode boundaries.** Each of the five modes has a precise scope (see the `references/mode-*.md` files). Do not expand Proofread to restructure paragraphs, do not let Revise silently edit `.docx` files, etc.
 3. **No fabricated examples.** If you add a worked example, use placeholder tokens (`<study region>`, `<metric>`, `<value>`) or a clearly-fictional setup. Do not paste real unpublished data.
 4. **Update reference cross-links.** If you rename or split a reference file, update every cross-link in `SKILL.md` and the other reference files.
 5. **Run the local test below** before opening the PR.
@@ -42,7 +42,7 @@ Other good PRs:
 
 ### PR ideas that need discussion first
 
-- Changes to the four-mode architecture itself (adding, splitting, or removing a mode).
+- Changes to the five-mode architecture itself (adding, splitting, or removing a mode).
 - Switching the citation backend away from Semantic Scholar.
 - Changing the `.docx` round-trip strategy.
 
