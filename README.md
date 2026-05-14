@@ -9,8 +9,8 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-*Drafts, reviews, revises, proofreads, and audits hydrology and water-resources manuscripts.*  
-*Ships with style profiles for* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *— extensible to others via a single reference file.*
+*Drafts, reviews, revises, proofreads, and audits scientific manuscripts.*  
+*Currently calibrated for hydrology, with profiles for* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *— extensible to other quantitative-science fields via a single reference file.*
 
 </div>
 
@@ -134,6 +134,18 @@ The skill currently ships with style profiles for two journals (HJ and JHRS), bu
 3. Add the new option to Block 1 of `references/startup-interview.md` so the skill can offer it at session start.
 
 PRs adding journal profiles for *Water Resources Research*, *Journal of Hydrology*, *Hydrology and Earth System Sciences*, *Water Resources Management*, and similar venues are explicitly welcomed — see `CONTRIBUTING.md`.
+
+### Extending to other quantitative-science fields
+
+The skill's reference framework (Audit mode's 8 checks, anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, reproducibility/back-matter standards) is **field-agnostic** — it applies to any quantitative-science manuscript with a Methods / Results / Discussion structure. Only the two journal style files (`references/journal-hydrogeology.md`, `references/journal-jhrs.md`) are hydrology-specific.
+
+To apply the skill to a different field (atmospheric sciences, hydrochemistry, soil science, ecology, geophysics, …):
+
+1. Add a journal style file for your target venue, following the "Extending to other journals" instructions above.
+2. Optionally, replace hydrology-flavored illustrative examples in `references/preset-example.md` with examples from your field.
+3. No core `SKILL.md` changes are needed — the mode protocols, citation workflow, and pause-and-confirm structure are domain-neutral.
+
+The skill currently ships with hydrology as its proof case. PRs adding profiles for related quantitative-science fields are welcomed — see `CONTRIBUTING.md`.
 
 ### MCP servers
 
