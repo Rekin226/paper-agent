@@ -45,13 +45,13 @@ The user selects one mode at session start. Each mode has its own reference file
 **Option A — Clone directly into the skills directory:**
 
 ```sh
-git clone https://github.com/<your-user>/paper-agent.git ~/.claude/skills/paper-agent
+git clone https://github.com/Rekin226/paper-agent.git ~/.claude/skills/paper-agent
 ```
 
 **Option B — Clone anywhere and symlink:**
 
 ```sh
-git clone https://github.com/<your-user>/paper-agent.git ~/code/paper-agent
+git clone https://github.com/Rekin226/paper-agent.git ~/code/paper-agent
 ln -s ~/code/paper-agent ~/.claude/skills/paper-agent
 ```
 
