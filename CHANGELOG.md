@@ -2,6 +2,20 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] — 2026-05-15
+
+### Changed
+
+- **Scope widened from "hydrology and water-resources" to "quantitative-science manuscripts, calibrated for hydrology."** The skill's underlying framework (Audit mode's 8 checks, anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, reproducibility/back-matter standards) is field-agnostic; only the two journal style files (`journal-hydrogeology.md`, `journal-jhrs.md`) are hydrology-specific. This release reframes the positioning to reflect that, while keeping hydrology as the proof case and trigger anchor.
+- SKILL.md frontmatter description rewritten: "quantitative-science papers, currently calibrated for hydrology and water-resources (HJ, JHRS) and extensible to other quantitative-science fields via a journal style file."
+- README hero tagline widened: "scientific manuscripts" (was "hydrology and water-resources manuscripts"), with an explicit hydrology-calibration note.
+- New README subsection **"Extending to other quantitative-science fields"** under Configuration, documenting the three-step process for applying the skill to atmospheric sciences, hydrochemistry, soil science, ecology, geophysics, and related fields.
+- Version badge bumped to 1.1.2.
+
+### Note
+
+This is a positioning/framing change, not a functionality change. The skill behaves identically to v1.1.1; hydrology remains the only domain with shipped journal style profiles. The reframe is intended to invite contributions from adjacent quantitative-science fields rather than implying out-of-the-box support for them.
+
 ## [1.1.1] — 2026-05-14
 
 ### Changed
