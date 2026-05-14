@@ -109,7 +109,7 @@ Reference files are loaded lazily — only the mode and journal files the curren
 ## 🔌 Dependencies
 
 - **Claude Code** — the CLI is the runtime. See [Claude Code docs](https://docs.claude.com/en/docs/claude-code) for setup.
-- **Semantic Scholar MCP** — required for citation resolution. The `.claude/settings.json` shipped with this repo enables it; install the MCP separately following the [Semantic Scholar MCP](https://github.com/) instructions for your environment.
+- **Semantic Scholar MCP** — required for citation resolution. The `.claude/settings.json` shipped with this repo enables it; install the MCP separately following the Semantic Scholar MCP instructions for your environment.
 - **Public `docx` skill** — required for `.docx` reading and writing. The skill expects it at `/mnt/skills/public/docx/SKILL.md` (Claude Code's standard public-skill path).
 - **`pandoc`** — used by the `docx` skill for text extraction. Install via `brew install pandoc` (macOS) or your platform equivalent.
 
