@@ -2,6 +2,39 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] — 2026-05-20
+
+### Added
+
+- New journal style profile **`references/journal-tim.md`** for IEEE Transactions on Instrumentation and Measurement. First non-hydrology profile in the skill, validating the v1.1.2 "extensible to other quantitative-science fields" claim. Source-grounded entirely on the *IEEE Editorial Style Manual for Authors* (29 July 2024, IEEE Publishing Operations) and the IEEE IMS *Information for Authors* page — no invented rules. Covers:
+  - Mandatory article structure (11-element order: Title → Abstract → Index Terms → Nomenclature → Introduction → Body → Conclusion → Appendix → Acknowledgment → References → Biographies)
+  - Abstract: 150–250 words, single paragraph, no equations/citations/footnotes
+  - Index Terms: alphabetical, end of Abstract block, mandatory
+  - Four heading levels with IEEEtran enumeration: Roman primary, capital-letter secondary, Arabic tertiary, lowercase quaternary
+  - Numeric bracketed citations via `ieee.csl`; in-text patterns including `[1, eq. (8)]`, `[1, Sec. IV]`, `[1, Fig. 2]`
+  - Figures: `Fig. N.` em-space caption, subpart `(a)`/`(b)` before caption parts, 600 dpi line art / 300 dpi photos, Lena image banned
+  - Tables: `TABLE I` Roman numerals, caption centered above without terminal period, inverted-pyramid descriptive text
+  - Equations: consecutive `(1)…`, Appendix restart with `(A1)…`
+  - First-footnote pattern (3 paragraphs: received-dates + financial support + corresponding-author marker; affiliations with country and email; supplementary materials notice)
+  - Mandatory AI-disclosure block in Acknowledgment when AI was used to generate text/figures/code
+  - Pre-submission checklist for Audit mode
+- Index entry added to `## REFERENCE FILES IN THIS SKILL` in `SKILL.md`.
+
+### Note
+
+The TIM profile demonstrates the extension pattern in practice: ~250 lines, drops in as a single file, no changes to the universal framework or other journal profiles. The `manuscript-docx-style.md` baseline still applies for everything the TIM profile doesn't override (TNR coercion, table styling fallback, mean ± std merging, TIFF figures, reproducible pipeline). The biggest TIM-specific overrides are: numeric citations (`--csl=ieee.csl`), table caption format, table numbering (Roman), Acknowledgment placement and AI-disclosure mandate, and mandatory first-footnote pattern.
+
+## [1.2.0] — 2026-05-20
+
+### Added
+
+- New reference file `references/manuscript-docx-style.md` — the canonical Word-output formatting spec, distilled from a real end-to-end build of a Springer/OQE-style manuscript. Covers: Times New Roman coercion across all run variants (`w:ascii`, `w:hAnsi`, `w:cs`, `w:eastAsia`); 14 pt bold centered title; 12 pt bold headings; 12 pt double-spaced justified body; Springer/booktabs three-rule table style (1.5 pt top, 0.5 pt under header, 1.5 pt bottom, no verticals, no banding); 9 pt single-spaced cells (7.5 pt for ≥ 10-column tables); autofit + 100 % preferred-width tables with `<w:tcW>` widths removed; `mean ± std` cell merging via literal Unicode `±`; Unicode-over-LaTeX-math in table headers; single-row headers via `.reset_index() + index=False`; TIFF figures at 300 dpi LZW; OMML equations (no `\textsc{}` inside `$...$`); pandoc `--citeproc` with trimmed `refs.bib`; XLSX (never CSV) for spreadsheet companions with per-cell numeric coercion to avoid Excel's "number stored as text" green triangles; the reproducible `pandoc → python-docx post-process` pipeline.
+- `## EXPORT TO .DOCX` section in `SKILL.md` now points export tasks at the new reference file as the canonical baseline; journal reference files continue to override per-journal specifics.
+
+### Note
+
+This release codifies a writing/formatting style validated end-to-end on a multi-table, multi-figure manuscript with citeproc citations. The baseline applies to any quantitative-science paper; the HJ/JHRS journal files override individual rules where their submission requirements differ.
+
 ## [1.1.2] — 2026-05-15
 
 ### Changed

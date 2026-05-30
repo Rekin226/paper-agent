@@ -237,6 +237,8 @@ Export requirements regardless of journal:
 - Equations as plain text with right-aligned sequential numbering
 - Validate with `python scripts/office/validate.py <filename>.docx` after generation
 
+For the full Word-output formatting spec (Times New Roman coercion across all run variants, Springer/booktabs three-rule table style, autofit + 100% width tables, mean ± std merging, TIFF figure format, citeproc citations, OMML equation handling, and the reproducible `pandoc → python-docx post-process` pipeline), read `references/manuscript-docx-style.md` before generating. That file is the canonical baseline; the journal reference file overrides it where they conflict.
+
 Journal-specific export details (line spacing, highlights block, abstract structure, KMZ reminder) are in the loaded journal reference file.
 
 Save to the workspace root with a filename the user specifies. Confirm creation and offer post-delivery revisions.
@@ -300,9 +302,11 @@ Do not generate plotting code. Provide specifications only.
 - `references/anti-ai-style.md` — write like a human, not like an AI. Read before every Draft-mode and Revise-mode writing session, and consulted by Proofread mode for compliance checks.
 - `references/introduction-structure.md` — the five-move funnel for Introduction sections (broad significance → narrowing review → gap → objectives → roadmap). Read before drafting or revising any Introduction.
 - `references/reproducibility.md` — Methods replicability standard, Data Availability and Code Availability statements, CRediT taxonomy, Conflict of Interest, Funding. Read when drafting Methods or back matter, and when reviewing/revising.
+- `references/manuscript-docx-style.md` — canonical Word-output formatting spec: TNR coercion, Springer-style tables, mean ± std merging, TIFF figures, OMML equations, citeproc citations, and the reproducible `pandoc → python-docx post-process` pipeline. Read during Export to .docx.
 - `references/startup-interview.md` — mode selection, exact startup questions, fast-path rules.
 - `references/journal-hydrogeology.md` — HJ style, structure, citation format, pre-submission checklist.
 - `references/journal-jhrs.md` — JHRS style, structured abstract, highlights, Elsevier reference format, pre-submission checklist.
+- `references/journal-tim.md` — IEEE Transactions on Instrumentation and Measurement style: numeric bracketed citations, Roman-numeral primary headings, IEEEtran class notes, mandatory abstract/Index-Terms/Conclusion/Acknowledgment/References/Biographies order, first-footnote pattern, mandatory AI-disclosure block, pre-submission checklist. Read when targeting IEEE TIM (or as a starting point for other IEEE Transactions).
 - `references/preset-example.md` — Draft-mode fast-path preset **template**. Defines the structure of a project preset: detection trigger, data files to cache, fixed project facts (study area, period, CRS, model variants, parameter counts, classification rules, thresholds, optimiser), abbreviations, mandatory limitations, Semantic Scholar queries per section, forbidden content, candidate figure pool, mandatory tables. Copy to `references/preset-<your-project>.md` (or symlink from `.local/`) and fill in the placeholders to enable workspace-based fast-path detection.
 - `references/mode-review.md` — Review mode: reviewer feedback rubric and report format.
 - `references/mode-revise.md` — Revise mode: section-by-section suggestion format, reviewer-comment mapping, response letter drafting.

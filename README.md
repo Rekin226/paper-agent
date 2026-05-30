@@ -5,7 +5,7 @@
 **Journal-quality hydrology manuscripts, drafted and reviewed by Claude.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.1.2-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
