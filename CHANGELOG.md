@@ -2,6 +2,20 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] — 2026-06-10
+
+### Added
+
+- New **"Provenance-leak tells"** subsection in `references/anti-ai-style.md` targeting artifacts that betray a manuscript was assembled from a code repository or LaTeX/internal source rather than written as prose:
+  - **Code-file paths and script names in body prose** (e.g. "implemented in `experiments/11_wavelength_sweep.py`"). Filenames, module paths, function names, CLI flags, config keys, and commit hashes are banned from the Methods/Results/Discussion narrative; the prose describes the *method*, and code locations live only in the Code Availability statement.
+  - **Raw internal cross-reference labels** (`[eq:...]`, `[fig:...]`, `[tab:...]`, `[sec:...]`, `\ref{...}`, `\eqref{...}`, `\cref{...}`, `{#eq-...}`) that never resolved. These must render as "Eq. (N)", "Fig. N", "Table N", "Section N"; an unknown target number is treated as a fabrication risk to resolve, not guess.
+  - **Placeholder and template residue** (`<N>`, `[TODO]`, `XXX`, "the figure above").
+- Two new pre-finalize self-check items (9, 10) and two Proofread edit-candidate rules in the same file.
+
+### Changed
+
+- Wired the new tells into the three modes that scan for them: `mode-proofread.md` (fixable — the one structural-looking edit Proofread may make, since a path carries no scientific content), `mode-review.md` (flagged as a **Major** reviewer comment), and `mode-audit.md` Check 4 (unresolved labels **Critical**, code paths **Major**, categorized under cross-reference integrity so they don't collide with the audit rule that defers AI-style markers to Proofread).
+
 ## [1.3.0] — 2026-05-20
 
 ### Added

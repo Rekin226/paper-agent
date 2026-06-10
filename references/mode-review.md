@@ -79,6 +79,7 @@ citation gaps, optional figure improvements, non-critical style nits.>
  - Equation formatting and symbol definition gaps
  - Figure/table caption quality
  - **AI-style markers** per `references/anti-ai-style.md`: count em-dashes in body prose, list hedge openers ("Importantly,", "Of note,", "It is worth noting that"), filler intensifiers ("very", "particularly"), and instances of "utilize"/"leverage". If the manuscript shows multiple of these patterns, flag it as a Major comment recommending a Proofread pass before submission, since reviewers increasingly recognize and penalize AI-style prose.
+ - **Provenance-leak tells** per `references/anti-ai-style.md`: code-file paths or script names in the narrative (e.g. "implemented in `experiments/...py`") and unresolved cross-reference labels (`[eq:...]`, `\ref{...}`, `{#eq-...}`). Either one is a Major comment — a reviewer reads them as evidence the text was machine-assembled and not proofread. Note that code locations belong only in the Code Availability statement and labels must render as "Eq. (N)" / "Fig. N" / "Table N".
 
 If the manuscript needs professional language editing, say so explicitly.>
 

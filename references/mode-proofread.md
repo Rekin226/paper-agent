@@ -15,6 +15,7 @@ Proofread mode is narrow by design. The agent may fix:
 - Citation format compliance (`(Author Year)` vs `(Author, Year)` depending on journal)
 - Reference list formatting compliance (Elsevier vs Springer conventions)
 - **AI-style markers** per `references/anti-ai-style.md` (em-dashes in body prose, hedge openers like "Importantly," and "Of note,", filler intensifiers, "utilize"/"leverage", and other patterns listed in that file)
+- **Provenance-leak tells** per `references/anti-ai-style.md`: code-file paths or script names in body prose (rewrite to describe the method; move any code location to the Code Availability statement) and raw cross-reference labels like `[eq:...]`, `\ref{...}`, `{#eq-...}` (replace with the rendered "Eq. (N)" / "Fig. N" / "Table N", or flag if the number is unconfirmable)
 
 The agent **may not**:
 - Change the meaning of any sentence

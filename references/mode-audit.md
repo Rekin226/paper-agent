@@ -96,6 +96,8 @@ Findings here are usually **Minor** unless the inconsistency causes scientific a
 - Every figure, table, and equation that exists must be referenced in the body at least once.
 - Every reference list entry must be cited in the body at least once.
 - Every in-text citation must have a matching reference list entry.
+- No unresolved label tokens survive in the body: `[eq:...]`, `[fig:...]`, `[tab:...]`, `[sec:...]`, `\ref{...}`, `\eqref{...}`, `\cref{...}`, `{#eq-...}`. Each is a **Critical** finding — the cross-reference never rendered, so the reader cannot tell which object is meant. Report it under this check, not as an AI-style marker.
+- No code-file paths or script names appear in the body (e.g. "implemented in `experiments/...py`"). Code locations belong only in the Code Availability statement. Flag as **Major** under this check.
 
 These integrity checks were partly run during extraction. Audit re-runs them and reports them in the structured format. Findings here are **Critical** for missing figures/tables (you cannot submit a manuscript that references nonexistent content) and **Major** for unused entries (orphan figures or uncited references).
 
