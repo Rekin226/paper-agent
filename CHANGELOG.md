@@ -8,6 +8,7 @@ All notable changes to `paper-agent` are documented here. The format follows [Ke
 
 - **One-command plugin install.** `paper-agent` is now packaged as a Claude Code plugin. The repo carries its own marketplace, so users can run `/plugin marketplace add Rekin226/paper-agent` then `/plugin install paper-agent@paper-agent` instead of cloning into `~/.claude/skills/`. New files: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`.
 - **Bundled Semantic Scholar MCP.** A root `.mcp.json` defines the citation server as `uvx semantic-scholar-mcp`, so a plugin install wires it up automatically — no separate MCP setup step. Works anonymously; honors `SEMANTIC_SCHOLAR_API_KEY` for higher throughput.
+- **Bundled try-it-in-60-seconds demos** under `examples/` (all synthetic data, clearly labelled). `examples/demo-draft/` turns synthetic CSVs + project notes into manuscript prose via Draft mode (with an auto-detect fast-path preset, `references/preset-demo.md`); `examples/demo-audit/` is a short manuscript seeded with planted inconsistencies plus an answer key, so a new user can watch Audit mode catch them. README gains a "See it in action" before/after section.
 
 ### Fixed
 

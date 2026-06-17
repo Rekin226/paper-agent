@@ -28,6 +28,24 @@ Use it when you have:
 - An existing `.docx` manuscript and need reviewer-style feedback, section-by-section revision suggestions, or a language-level polish.
 - Reviewer comments from a journal decision letter and need help producing a point-by-point response and revised text.
 
+## 🎬 See it in action
+
+Two bundled, **synthetic** demos let you try the skill in ~60 seconds with no data of your own — see [`examples/`](examples/).
+
+**Audit mode** reads a manuscript and surfaces inconsistencies authors miss. Given this (synthetic) draft:
+
+> *Abstract:* "We analysed **six years** of monitoring data (**January 2018–December 2022**)… a network of **33 wells**…"
+> *Results:* "Across all **35 wells**, the model reproduced the seasonal cycle (Figure 1)… the spatial pattern is shown in **Figure 3**… the correlation with the tidal signal was **not significant (rho = 0.02, p = 0.94)**."
+
+Audit flags, among others:
+
+- 🔴 **Temporal error** — "six years" but January 2018–December 2022 is **five** years.
+- 🔴 **Sample-size drift** — **33** wells in the Abstract/Methods, **35** in the Results.
+- 🔴 **Argument-honesty conflict** — the Abstract calls the tidal correlation "strong", but the Results report it as **not significant**.
+- 🟠 **Broken cross-reference** — the text cites **Figure 3**, but only Figures 1–2 are captioned.
+
+The full demo (with answer key) and a **Draft-mode** demo that turns synthetic CSVs into manuscript prose are in [`examples/`](examples/).
+
 ## 🎯 Modes
 
 | | Mode | Input | Output |
@@ -103,6 +121,7 @@ paper-agent/
 ├── .mcp.json                        # defines the semantic-scholar MCP server
 ├── .claude/settings.json            # enables the semantic-scholar MCP
 ├── .local/                          # gitignored: your private presets
+├── examples/                        # bundled synthetic demos (Draft + Audit) — try it in 60s
 └── references/
     ├── startup-interview.md         # mode/journal/data interview
     ├── journal-hydrogeology.md      # HJ style, citation format, checklist
@@ -116,7 +135,8 @@ paper-agent/
     ├── anti-fabrication.md          # ask, flag, search, or decline — never invent
     ├── anti-ai-style.md             # patterns reviewers recognise as AI
     ├── anti-summary-rules.md        # write prose, not outlines
-    └── preset-example.md            # project-preset template
+    ├── preset-example.md            # project-preset template
+    └── preset-demo.md               # auto-detect preset for the bundled Draft demo
 ```
 
 Reference files are loaded lazily — only the mode and journal files the current session needs are read. This keeps Claude's context budget small.
