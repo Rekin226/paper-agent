@@ -10,7 +10,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 *Drafts, reviews, revises, proofreads, and audits scientific manuscripts.*  
-*Currently calibrated for hydrology, with profiles for* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *— extensible to other quantitative-science fields via a single reference file.*
+*Calibrated for hydrology (* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *), with a profile for* **IEEE Transactions on Instrumentation and Measurement** *and a generic profile for any other quantitative-science journal — extensible via a single reference file.*
 
 </div>
 
@@ -126,6 +126,8 @@ paper-agent/
     ├── startup-interview.md         # mode/journal/data interview
     ├── journal-hydrogeology.md      # HJ style, citation format, checklist
     ├── journal-jhrs.md              # JHRS style, structured abstract, KMZ
+    ├── journal-tim.md               # IEEE TIM style (numbered cites, IEEEtran)
+    ├── journal-generic.md           # field-agnostic baseline for any other journal
     ├── mode-review.md               # Review-mode report format
     ├── mode-revise.md               # Revise-mode BEFORE/AFTER protocol
     ├── mode-proofread.md            # Proofread-mode allowed scope
@@ -161,13 +163,17 @@ If you work on the same project repeatedly, define a project preset to skip the 
 
 ### Extending to other journals
 
-The skill currently ships with style profiles for two journals (HJ and JHRS), but most of its value is journal-agnostic: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any hydrology or water-resources manuscript. To target a different journal:
+The skill ships with named profiles for **Hydrogeology Journal**, **Journal of Hydrology: Regional Studies**, and **IEEE Transactions on Instrumentation and Measurement**, plus a field-agnostic **generic** profile for everything else. Most of the skill's value is journal-agnostic anyway: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any quantitative-science manuscript.
 
-1. Copy `references/journal-hydrogeology.md` to `references/journal-<your-journal>.md`.
-2. Adapt the citation format, abstract structure, equation conventions, and pre-submission checklist to match the journal's author guidelines.
+**For a one-off submission to an unlisted journal:** select `generic` at session start and paste the journal's author guidelines — the generic profile uses them to fill in the specifics (citation style, word limits, abstract format) and applies sensible defaults for the rest.
+
+**For a journal you target repeatedly,** add a reusable named profile:
+
+1. Copy the closest existing profile (`references/journal-hydrogeology.md` for author–year journals, `references/journal-tim.md` for numbered/IEEE journals, or `references/journal-generic.md` as a neutral starting point) to `references/journal-<your-journal>.md`.
+2. Adapt the citation format, abstract structure, equation conventions, and pre-submission checklist to match the journal's author guidelines. Anchor every rule to the guidelines — do not invent formatting rules.
 3. Add the new option to Block 1 of `references/startup-interview.md` so the skill can offer it at session start.
 
-PRs adding journal profiles for *Water Resources Research*, *Journal of Hydrology*, *Hydrology and Earth System Sciences*, *Water Resources Management*, and similar venues are explicitly welcomed — see `CONTRIBUTING.md`.
+PRs adding journal profiles — *Water Resources Research*, *Journal of Hydrology*, *Hydrology and Earth System Sciences*, *Water Resources Management*, or venues in adjacent quantitative fields — are explicitly welcomed and are the easiest way to contribute. See `CONTRIBUTING.md`.
 
 ### Extending to other quantitative-science fields
 
