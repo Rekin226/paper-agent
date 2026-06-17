@@ -144,7 +144,7 @@ Reference files are loaded lazily — only the mode and journal files the curren
 ## 🔌 Dependencies
 
 - **Claude Code** — the CLI is the runtime. See [Claude Code docs](https://docs.claude.com/en/docs/claude-code) for setup.
-- **Semantic Scholar MCP** — required for citation resolution. The shipped `.mcp.json` defines it as `uvx semantic-scholar-mcp`; the plugin install wires it up automatically. Requires [`uv`](https://docs.astral.sh/uv/) on your PATH. Works anonymously at ~1 request/sec; set a `SEMANTIC_SCHOLAR_API_KEY` env var for higher throughput.
+- **Semantic Scholar MCP** — required for citation resolution. The shipped `.mcp.json` defines it as `uvx semantic-scholar-mcp`; the plugin install wires it up automatically. Requires [`uv`](https://docs.astral.sh/uv/) on your PATH. **No API key is required** — it uses Semantic Scholar's shared anonymous pool, which is fine for the low-volume lookups during drafting. No key is bundled with this skill; each user supplies their own. For a dedicated, steadier rate (1 request/sec), set your own `SEMANTIC_SCHOLAR_API_KEY` environment variable.
 - **`pandoc`** — required for `.docx` reading and for the `.docx` export fallback. Install via `brew install pandoc` (macOS) or your platform equivalent.
 - **`python-docx`** — used by the export fallback's post-process pass. Auto-installed on demand (`pip install python-docx`).
 - **Public `docx` skill** *(optional)* — if the public `docx` skill is present (`/mnt/skills/public/docx/SKILL.md` in Claude Code cloud, or `~/.claude/skills/docx/SKILL.md` locally), `paper-agent` uses it for `.docx` read/write. If it is absent — common on local installs — the skill falls back to the `pandoc → python-docx` pipeline automatically, so `.docx` features work either way.

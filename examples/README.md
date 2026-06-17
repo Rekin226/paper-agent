@@ -11,7 +11,7 @@ Two self-contained demos you can run immediately after installing the skill, wit
 
 - `paper-agent` installed (see the main [README](../README.md#-installation)).
 - `pandoc` on your PATH (only for the Audit demo's `.docx` build).
-- Citation resolution uses the bundled Semantic Scholar MCP; it works offline-free at ~1 req/sec without a key.
+- Citation resolution uses the bundled Semantic Scholar MCP; **no API key is required** (it uses Semantic Scholar's shared anonymous pool).
 
 ## Run the Draft demo
 
