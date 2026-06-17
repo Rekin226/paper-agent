@@ -1,0 +1,19 @@
+{
+  "name": "paper-agent",
+  "owner": {
+    "name": "Ouédraogo Abdoul Rachid",
+    "email": "abdoulrachid03@gmail.com"
+  },
+  "description": "Paper Agent — academic manuscript drafting, review, revision, proofreading, and auditing for quantitative-science journals.",
+  "plugins": [
+    {
+      "name": "paper-agent",
+      "source": "./",
+      "description": "Draft, review, revise, proofread, and audit quantitative-science journal manuscripts at submission quality. Five strict modes, Semantic Scholar citation integrity, .docx round-trip.",
+      "version": "1.5.0",
+      "homepage": "https://github.com/Rekin226/paper-agent",
+      "repository": "https://github.com/Rekin226/paper-agent",
+      "license": "MIT"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "semantic-scholar": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["semantic-scholar-mcp"]
+    }
+  }
+}

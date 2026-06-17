@@ -2,6 +2,21 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-06-17
+
+### Added
+
+- **One-command plugin install.** `paper-agent` is now packaged as a Claude Code plugin. The repo carries its own marketplace, so users can run `/plugin marketplace add Rekin226/paper-agent` then `/plugin install paper-agent@paper-agent` instead of cloning into `~/.claude/skills/`. New files: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`.
+- **Bundled Semantic Scholar MCP.** A root `.mcp.json` defines the citation server as `uvx semantic-scholar-mcp`, so a plugin install wires it up automatically — no separate MCP setup step. Works anonymously; honors `SEMANTIC_SCHOLAR_API_KEY` for higher throughput.
+
+### Fixed
+
+- **`.docx` features no longer dead-end on local installs.** SKILL.md hard-coded the public `docx` skill at `/mnt/skills/public/docx/SKILL.md`, a cloud-sandbox path absent on local Mac/Linux installs, silently breaking `.docx` reading and export. Both the reading and export steps now detect the `docx` skill at the cloud *or* local (`~/.claude/skills/docx/`) path and fall back to the documented `pandoc → python-docx` pipeline when it is absent, so `.docx` round-trip works in every environment.
+
+### Changed
+
+- README: plugin install is now the recommended Option A (clone/symlink demoted to B/C); Dependencies section corrected to mark the public `docx` skill as optional, document the `pandoc`/`python-docx` fallback, and reflect the bundled MCP. Version badge aligned to the current release.
+
 ## [1.4.0] — 2026-06-10
 
 ### Added

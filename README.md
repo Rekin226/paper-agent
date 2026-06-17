@@ -5,7 +5,7 @@
 **Journal-quality hydrology manuscripts, drafted and reviewed by Claude.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -42,22 +42,31 @@ The user selects one mode at session start. Each mode has its own reference file
 
 ## 📦 Installation
 
-`paper-agent` is a Claude Code skill. It lives at `~/.claude/skills/paper-agent/` on your machine.
+`paper-agent` is a Claude Code skill. Install it as a plugin (recommended) or clone it into your skills directory.
 
-**Option A — Clone directly into the skills directory:**
+**Option A — Install as a plugin (recommended, one command each):**
+
+```sh
+/plugin marketplace add Rekin226/paper-agent
+/plugin install paper-agent@paper-agent
+```
+
+This registers the repo as a marketplace and installs the skill. The bundled `.mcp.json` also wires up the Semantic Scholar MCP server automatically (see [Dependencies](#-dependencies)).
+
+**Option B — Clone directly into the skills directory:**
 
 ```sh
 git clone https://github.com/Rekin226/paper-agent.git ~/.claude/skills/paper-agent
 ```
 
-**Option B — Clone anywhere and symlink:**
+**Option C — Clone anywhere and symlink:**
 
 ```sh
 git clone https://github.com/Rekin226/paper-agent.git ~/code/paper-agent
 ln -s ~/code/paper-agent ~/.claude/skills/paper-agent
 ```
 
-Restart your Claude Code session (or open a new one) so it picks up the skill.
+With Option B or C, restart your Claude Code session (or open a new one) so it picks up the skill.
 
 ## 🚀 Quickstart
 
@@ -88,6 +97,10 @@ The skill will run a short startup interview to pick the mode, the target journa
 ```
 paper-agent/
 ├── SKILL.md                         # entry point + Draft-mode workflow
+├── .claude-plugin/                  # plugin + marketplace manifests (one-command install)
+│   ├── plugin.json
+│   └── marketplace.json
+├── .mcp.json                        # defines the semantic-scholar MCP server
 ├── .claude/settings.json            # enables the semantic-scholar MCP
 ├── .local/                          # gitignored: your private presets
 └── references/
@@ -111,9 +124,10 @@ Reference files are loaded lazily — only the mode and journal files the curren
 ## 🔌 Dependencies
 
 - **Claude Code** — the CLI is the runtime. See [Claude Code docs](https://docs.claude.com/en/docs/claude-code) for setup.
-- **Semantic Scholar MCP** — required for citation resolution. The `.claude/settings.json` shipped with this repo enables it; install the MCP separately following the Semantic Scholar MCP instructions for your environment.
-- **Public `docx` skill** — required for `.docx` reading and writing. The skill expects it at `/mnt/skills/public/docx/SKILL.md` (Claude Code's standard public-skill path).
-- **`pandoc`** — used by the `docx` skill for text extraction. Install via `brew install pandoc` (macOS) or your platform equivalent.
+- **Semantic Scholar MCP** — required for citation resolution. The shipped `.mcp.json` defines it as `uvx semantic-scholar-mcp`; the plugin install wires it up automatically. Requires [`uv`](https://docs.astral.sh/uv/) on your PATH. Works anonymously at ~1 request/sec; set a `SEMANTIC_SCHOLAR_API_KEY` env var for higher throughput.
+- **`pandoc`** — required for `.docx` reading and for the `.docx` export fallback. Install via `brew install pandoc` (macOS) or your platform equivalent.
+- **`python-docx`** — used by the export fallback's post-process pass. Auto-installed on demand (`pip install python-docx`).
+- **Public `docx` skill** *(optional)* — if the public `docx` skill is present (`/mnt/skills/public/docx/SKILL.md` in Claude Code cloud, or `~/.claude/skills/docx/SKILL.md` locally), `paper-agent` uses it for `.docx` read/write. If it is absent — common on local installs — the skill falls back to the `pandoc → python-docx` pipeline automatically, so `.docx` features work either way.
 
 ## ⚙️ Configuration
 

@@ -62,7 +62,7 @@ After the interview, report data loaded, mode selected, journal selected, and wa
 
 When the mode is Review, Revise, or Proofread, the user provides a path to an existing `.docx` manuscript. Before any analysis:
 
-1. **Delegate extraction to the public `docx` skill** at `/mnt/skills/public/docx/SKILL.md`. Read that skill's reading section — it uses `pandoc` for text extraction and direct XML access for structure. Do not attempt to parse .docx with ad-hoc scripts.
+1. **Extract via the public `docx` skill if available, otherwise via `pandoc` directly.** First check for the public `docx` skill at `/mnt/skills/public/docx/SKILL.md` (Claude Code cloud) or `~/.claude/skills/docx/SKILL.md` (local install). If found, read its reading section and use it — it uses `pandoc` for text extraction plus direct XML access for structure. If neither path exists (common on local installs), extract directly: `pandoc <file>.docx -t markdown` for section text, and `unzip -p <file>.docx word/document.xml` for structure when needed. Either way, do not parse `.docx` with ad-hoc byte-level scripts.
 2. **Extract and cache:**
    - Full text by section (Title, Abstract, Highlights if present, 1. Introduction, 2. Methods, ..., References)
    - All in-text citations (every `(Author Year)` or `(Author, Year)` occurrence)
@@ -227,7 +227,7 @@ Before generating the .docx, verify every item below. Fix or flag any failure.
 
 ## EXPORT TO .DOCX
 
-When the user confirms export, delegate to the public `docx` skill at `/mnt/skills/public/docx/SKILL.md`. Read that skill's SKILL.md before generating the document — it is the canonical path for .docx creation in this environment and uses `docx-js`.
+When the user confirms export, generate the `.docx` via the public `docx` skill if it is installed, otherwise via the local `pandoc → python-docx` pipeline. **Detection:** check `/mnt/skills/public/docx/SKILL.md` (Claude Code cloud) and `~/.claude/skills/docx/SKILL.md` (local install); if either exists, read its SKILL.md before generating — it is the canonical path in that environment and uses `docx-js`. **Fallback (no docx skill present):** follow the reproducible pipeline in `references/manuscript-docx-style.md` — `pandoc` converts the manuscript to `.docx`, then a `python-docx` post-process pass enforces the formatting spec. Run `pip install python-docx` first if the import is missing. Both paths must satisfy the export requirements below.
 
 Export requirements regardless of journal:
 - A4 page, 1-inch margins, single-column layout
