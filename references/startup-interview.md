@@ -29,9 +29,10 @@ Based on the answer, load the corresponding mode reference file immediately:
 >
 > 1. **Hydrogeology Journal** (Springer / IAH) — `hj`
 > 2. **Journal of Hydrology: Regional Studies** (Elsevier) — `jhrs`
-> 3. Something else — please paste the author guidelines or pick the closest match above.
+> 3. **IEEE Transactions on Instrumentation and Measurement** (IEEE) — `tim`
+> 4. **Other quantitative-science journal** — `generic` (paste the author guidelines if you have them)
 
-Load either `references/journal-hydrogeology.md` or `references/journal-jhrs.md` and keep it in mind throughout the session. All five modes need the journal style: Draft uses it for writing, Review and Revise use it to check compliance, Proofread uses it for terminology rules, Audit uses it for journal-specific consistency checks.
+Load the matching profile — `references/journal-hydrogeology.md` (`hj`), `references/journal-jhrs.md` (`jhrs`), `references/journal-tim.md` (`tim`), or `references/journal-generic.md` (`generic`) — and keep it in mind throughout the session. For `generic`, also read any author guidelines the user pastes; they override the generic baseline on every point of conflict. All five modes need the journal style: Draft uses it for writing, Review and Revise use it to check compliance, Proofread uses it for terminology rules, Audit uses it for journal-specific consistency checks.
 
 ---
 
@@ -134,8 +135,8 @@ If the user pastes reviewer comments, number them sequentially and cache them. E
 
 After all applicable blocks are complete, report:
 
-> **Mode:** [Draft / Review / Revise / Proofread]
-> **Journal:** [HJ / JHRS]
+> **Mode:** [Draft / Review / Revise / Proofread / Audit]
+> **Journal:** [HJ / JHRS / TIM / generic]
 > **[Draft-specific]** Data loaded: [summary of cached values, N stations/samples, period, study area]. [N] limitation items cached.
 > **[Non-Draft]** Manuscript loaded: <filename>. [extraction summary].
 > Semantic Scholar citation resolution active. Ready to proceed — confirm to begin.

@@ -48,7 +48,7 @@ Run once per session, before any writing or review. Follow `references/startup-i
 
 **Block 0 — Mode selection (always first).** Ask which mode the user wants: Draft, Review, Revise, Proofread, or Audit. Load the corresponding reference file immediately.
 
-**Block 1 — Journal target** (all modes). Load `references/journal-hydrogeology.md` or `references/journal-jhrs.md` based on the answer. The journal style matters for Review (is the manuscript HJ-compliant?), Revise (do the edits match journal style?), and Proofread (what terminology rules to enforce?), not just Draft.
+**Block 1 — Journal target** (all modes). Load the journal profile matching the answer — `references/journal-hydrogeology.md` (`hj`), `references/journal-jhrs.md` (`jhrs`), `references/journal-tim.md` (`tim`), or `references/journal-generic.md` (`generic`, for any other quantitative-science journal). For `generic`, also read any author guidelines the user pastes; they override the generic baseline. The journal style matters for Review (is the manuscript compliant?), Revise (do the edits match journal style?), and Proofread (what terminology rules to enforce?), not just Draft.
 
 **Remaining blocks branch by mode.** Read `references/startup-interview.md` for the full protocol.
 
@@ -62,7 +62,7 @@ After the interview, report data loaded, mode selected, journal selected, and wa
 
 When the mode is Review, Revise, or Proofread, the user provides a path to an existing `.docx` manuscript. Before any analysis:
 
-1. **Delegate extraction to the public `docx` skill** at `/mnt/skills/public/docx/SKILL.md`. Read that skill's reading section — it uses `pandoc` for text extraction and direct XML access for structure. Do not attempt to parse .docx with ad-hoc scripts.
+1. **Extract via the public `docx` skill if available, otherwise via `pandoc` directly.** First check for the public `docx` skill at `/mnt/skills/public/docx/SKILL.md` (Claude Code cloud) or `~/.claude/skills/docx/SKILL.md` (local install). If found, read its reading section and use it — it uses `pandoc` for text extraction plus direct XML access for structure. If neither path exists (common on local installs), extract directly: `pandoc <file>.docx -t markdown` for section text, and `unzip -p <file>.docx word/document.xml` for structure when needed. Either way, do not parse `.docx` with ad-hoc byte-level scripts.
 2. **Extract and cache:**
    - Full text by section (Title, Abstract, Highlights if present, 1. Introduction, 2. Methods, ..., References)
    - All in-text citations (every `(Author Year)` or `(Author, Year)` occurrence)
@@ -104,7 +104,7 @@ Execute before drafting each section except the Abstract (most journals, includi
 1. **Identify citation needs.** List the claims in the upcoming section that require literature support.
 2. **Search Semantic Scholar.** One focused query per topic. Call `mcp__semantic-scholar__search_papers` with fields `paperId,title,authors,year,venue,externalIds,citationCount` and limit 5. Never batch unrelated topics into one query.
 3. **Auto-select the best match.** Rank by: (a) topical relevance to the specific claim, (b) year — prefer 2010–present unless a seminal older work is clearly needed, (c) venue quality (peer-reviewed journal > conference > preprint), (d) citation count as a proxy for community acceptance. Select the single top-ranked result. If nothing scores adequately on relevance, insert `[CITATION NEEDED: <topic>]` inline and continue. Never insert a low-quality citation to fill a slot.
-4. **Format in the journal's style.** Use the in-text and reference formats defined in the loaded journal reference file (`references/journal-hydrogeology.md` or `references/journal-jhrs.md`). Use `externalIds.DOI` when available.
+4. **Format in the journal's style.** Use the in-text and reference formats defined in the loaded journal reference file (whichever `references/journal-*.md` the user selected). Use `externalIds.DOI` when available.
 5. **Insert inline + append to running reference list.** Place the formatted in-text citation at the exact sentence location. Append the full reference entry to a `## REFERENCE LIST` block that grows across the session, alphabetically sorted and deduplicated by DOI or title.
 6. **Post-section citation summary.** After each section output, report:
    ```
@@ -227,7 +227,7 @@ Before generating the .docx, verify every item below. Fix or flag any failure.
 
 ## EXPORT TO .DOCX
 
-When the user confirms export, delegate to the public `docx` skill at `/mnt/skills/public/docx/SKILL.md`. Read that skill's SKILL.md before generating the document — it is the canonical path for .docx creation in this environment and uses `docx-js`.
+When the user confirms export, generate the `.docx` via the public `docx` skill if it is installed, otherwise via the local `pandoc → python-docx` pipeline. **Detection:** check `/mnt/skills/public/docx/SKILL.md` (Claude Code cloud) and `~/.claude/skills/docx/SKILL.md` (local install); if either exists, read its SKILL.md before generating — it is the canonical path in that environment and uses `docx-js`. **Fallback (no docx skill present):** follow the reproducible pipeline in `references/manuscript-docx-style.md` — `pandoc` converts the manuscript to `.docx`, then a `python-docx` post-process pass enforces the formatting spec. Run `pip install python-docx` first if the import is missing. Both paths must satisfy the export requirements below.
 
 Export requirements regardless of journal:
 - A4 page, 1-inch margins, single-column layout
@@ -307,6 +307,7 @@ Do not generate plotting code. Provide specifications only.
 - `references/journal-hydrogeology.md` — HJ style, structure, citation format, pre-submission checklist.
 - `references/journal-jhrs.md` — JHRS style, structured abstract, highlights, Elsevier reference format, pre-submission checklist.
 - `references/journal-tim.md` — IEEE Transactions on Instrumentation and Measurement style: numeric bracketed citations, Roman-numeral primary headings, IEEEtran class notes, mandatory abstract/Index-Terms/Conclusion/Acknowledgment/References/Biographies order, first-footnote pattern, mandatory AI-disclosure block, pre-submission checklist. Read when targeting IEEE TIM (or as a starting point for other IEEE Transactions).
+- `references/journal-generic.md` — field-agnostic baseline for any other quantitative-science journal: IMRaD structure, standard scientific tense, SI units, sequential numbering, mandatory Limitations subsection. Defers to the target journal's author guidelines on points that genuinely vary (citation style, word limits, abstract format, first-person policy). Read when the user selects `generic`.
 - `references/preset-example.md` — Draft-mode fast-path preset **template**. Defines the structure of a project preset: detection trigger, data files to cache, fixed project facts (study area, period, CRS, model variants, parameter counts, classification rules, thresholds, optimiser), abbreviations, mandatory limitations, Semantic Scholar queries per section, forbidden content, candidate figure pool, mandatory tables. Copy to `references/preset-<your-project>.md` (or symlink from `.local/`) and fill in the placeholders to enable workspace-based fast-path detection.
 - `references/mode-review.md` — Review mode: reviewer feedback rubric and report format.
 - `references/mode-revise.md` — Revise mode: section-by-section suggestion format, reviewer-comment mapping, response letter drafting.

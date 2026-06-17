@@ -1,0 +1,7 @@
+well_id,lon,lat,class,screen_depth_m
+DW-01,120.41,23.81,inland,42
+DW-02,120.35,23.78,inland,38
+DW-03,120.28,23.74,coastal,25
+DW-04,120.22,23.70,coastal,18
+DW-05,120.45,23.85,inland,55
+DW-06,120.31,23.76,coastal,30

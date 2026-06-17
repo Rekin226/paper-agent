@@ -1,0 +1,7 @@
+well_id,class,kge_cal,kge_val,rmse_val_m,recession_a,recharge_b
+DW-01,inland,0.84,0.79,0.31,0.041,0.62
+DW-02,inland,0.81,0.74,0.28,0.038,0.58
+DW-03,coastal,0.72,0.63,0.22,0.055,0.47
+DW-04,coastal,0.68,0.57,0.19,0.061,0.43
+DW-05,inland,0.86,0.82,0.35,0.036,0.66
+DW-06,coastal,0.70,0.61,0.24,0.058,0.45

@@ -5,12 +5,12 @@
 **Journal-quality hydrology manuscripts, drafted and reviewed by Claude.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 *Drafts, reviews, revises, proofreads, and audits scientific manuscripts.*  
-*Currently calibrated for hydrology, with profiles for* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *— extensible to other quantitative-science fields via a single reference file.*
+*Calibrated for hydrology (* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** *), with a profile for* **IEEE Transactions on Instrumentation and Measurement** *and a generic profile for any other quantitative-science journal — extensible via a single reference file.*
 
 </div>
 
@@ -28,6 +28,24 @@ Use it when you have:
 - An existing `.docx` manuscript and need reviewer-style feedback, section-by-section revision suggestions, or a language-level polish.
 - Reviewer comments from a journal decision letter and need help producing a point-by-point response and revised text.
 
+## 🎬 See it in action
+
+Two bundled, **synthetic** demos let you try the skill in ~60 seconds with no data of your own — see [`examples/`](examples/).
+
+**Audit mode** reads a manuscript and surfaces inconsistencies authors miss. Given this (synthetic) draft:
+
+> *Abstract:* "We analysed **six years** of monitoring data (**January 2018–December 2022**)… a network of **33 wells**…"
+> *Results:* "Across all **35 wells**, the model reproduced the seasonal cycle (Figure 1)… the spatial pattern is shown in **Figure 3**… the correlation with the tidal signal was **not significant (rho = 0.02, p = 0.94)**."
+
+Audit flags, among others:
+
+- 🔴 **Temporal error** — "six years" but January 2018–December 2022 is **five** years.
+- 🔴 **Sample-size drift** — **33** wells in the Abstract/Methods, **35** in the Results.
+- 🔴 **Argument-honesty conflict** — the Abstract calls the tidal correlation "strong", but the Results report it as **not significant**.
+- 🟠 **Broken cross-reference** — the text cites **Figure 3**, but only Figures 1–2 are captioned.
+
+The full demo (with answer key) and a **Draft-mode** demo that turns synthetic CSVs into manuscript prose are in [`examples/`](examples/).
+
 ## 🎯 Modes
 
 | | Mode | Input | Output |
@@ -42,22 +60,31 @@ The user selects one mode at session start. Each mode has its own reference file
 
 ## 📦 Installation
 
-`paper-agent` is a Claude Code skill. It lives at `~/.claude/skills/paper-agent/` on your machine.
+`paper-agent` is a Claude Code skill. Install it as a plugin (recommended) or clone it into your skills directory.
 
-**Option A — Clone directly into the skills directory:**
+**Option A — Install as a plugin (recommended, one command each):**
+
+```sh
+/plugin marketplace add Rekin226/paper-agent
+/plugin install paper-agent@paper-agent
+```
+
+This registers the repo as a marketplace and installs the skill. The bundled `.mcp.json` also wires up the Semantic Scholar MCP server automatically (see [Dependencies](#-dependencies)).
+
+**Option B — Clone directly into the skills directory:**
 
 ```sh
 git clone https://github.com/Rekin226/paper-agent.git ~/.claude/skills/paper-agent
 ```
 
-**Option B — Clone anywhere and symlink:**
+**Option C — Clone anywhere and symlink:**
 
 ```sh
 git clone https://github.com/Rekin226/paper-agent.git ~/code/paper-agent
 ln -s ~/code/paper-agent ~/.claude/skills/paper-agent
 ```
 
-Restart your Claude Code session (or open a new one) so it picks up the skill.
+With Option B or C, restart your Claude Code session (or open a new one) so it picks up the skill.
 
 ## 🚀 Quickstart
 
@@ -88,12 +115,19 @@ The skill will run a short startup interview to pick the mode, the target journa
 ```
 paper-agent/
 ├── SKILL.md                         # entry point + Draft-mode workflow
+├── .claude-plugin/                  # plugin + marketplace manifests (one-command install)
+│   ├── plugin.json
+│   └── marketplace.json
+├── .mcp.json                        # defines the semantic-scholar MCP server
 ├── .claude/settings.json            # enables the semantic-scholar MCP
 ├── .local/                          # gitignored: your private presets
+├── examples/                        # bundled synthetic demos (Draft + Audit) — try it in 60s
 └── references/
     ├── startup-interview.md         # mode/journal/data interview
     ├── journal-hydrogeology.md      # HJ style, citation format, checklist
     ├── journal-jhrs.md              # JHRS style, structured abstract, KMZ
+    ├── journal-tim.md               # IEEE TIM style (numbered cites, IEEEtran)
+    ├── journal-generic.md           # field-agnostic baseline for any other journal
     ├── mode-review.md               # Review-mode report format
     ├── mode-revise.md               # Revise-mode BEFORE/AFTER protocol
     ├── mode-proofread.md            # Proofread-mode allowed scope
@@ -103,7 +137,8 @@ paper-agent/
     ├── anti-fabrication.md          # ask, flag, search, or decline — never invent
     ├── anti-ai-style.md             # patterns reviewers recognise as AI
     ├── anti-summary-rules.md        # write prose, not outlines
-    └── preset-example.md            # project-preset template
+    ├── preset-example.md            # project-preset template
+    └── preset-demo.md               # auto-detect preset for the bundled Draft demo
 ```
 
 Reference files are loaded lazily — only the mode and journal files the current session needs are read. This keeps Claude's context budget small.
@@ -111,9 +146,10 @@ Reference files are loaded lazily — only the mode and journal files the curren
 ## 🔌 Dependencies
 
 - **Claude Code** — the CLI is the runtime. See [Claude Code docs](https://docs.claude.com/en/docs/claude-code) for setup.
-- **Semantic Scholar MCP** — required for citation resolution. The `.claude/settings.json` shipped with this repo enables it; install the MCP separately following the Semantic Scholar MCP instructions for your environment.
-- **Public `docx` skill** — required for `.docx` reading and writing. The skill expects it at `/mnt/skills/public/docx/SKILL.md` (Claude Code's standard public-skill path).
-- **`pandoc`** — used by the `docx` skill for text extraction. Install via `brew install pandoc` (macOS) or your platform equivalent.
+- **Semantic Scholar MCP** — required for citation resolution. The shipped `.mcp.json` defines it as `uvx semantic-scholar-mcp`; the plugin install wires it up automatically. Requires [`uv`](https://docs.astral.sh/uv/) on your PATH. **No API key is required** — it uses Semantic Scholar's shared anonymous pool, which is fine for the low-volume lookups during drafting. No key is bundled with this skill; each user supplies their own. For a dedicated, steadier rate (1 request/sec), set your own `SEMANTIC_SCHOLAR_API_KEY` environment variable.
+- **`pandoc`** — required for `.docx` reading and for the `.docx` export fallback. Install via `brew install pandoc` (macOS) or your platform equivalent.
+- **`python-docx`** — used by the export fallback's post-process pass. Auto-installed on demand (`pip install python-docx`).
+- **Public `docx` skill** *(optional)* — if the public `docx` skill is present (`/mnt/skills/public/docx/SKILL.md` in Claude Code cloud, or `~/.claude/skills/docx/SKILL.md` locally), `paper-agent` uses it for `.docx` read/write. If it is absent — common on local installs — the skill falls back to the `pandoc → python-docx` pipeline automatically, so `.docx` features work either way.
 
 ## ⚙️ Configuration
 
@@ -127,13 +163,17 @@ If you work on the same project repeatedly, define a project preset to skip the 
 
 ### Extending to other journals
 
-The skill currently ships with style profiles for two journals (HJ and JHRS), but most of its value is journal-agnostic: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any hydrology or water-resources manuscript. To target a different journal:
+The skill ships with named profiles for **Hydrogeology Journal**, **Journal of Hydrology: Regional Studies**, and **IEEE Transactions on Instrumentation and Measurement**, plus a field-agnostic **generic** profile for everything else. Most of the skill's value is journal-agnostic anyway: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any quantitative-science manuscript.
 
-1. Copy `references/journal-hydrogeology.md` to `references/journal-<your-journal>.md`.
-2. Adapt the citation format, abstract structure, equation conventions, and pre-submission checklist to match the journal's author guidelines.
+**For a one-off submission to an unlisted journal:** select `generic` at session start and paste the journal's author guidelines — the generic profile uses them to fill in the specifics (citation style, word limits, abstract format) and applies sensible defaults for the rest.
+
+**For a journal you target repeatedly,** add a reusable named profile:
+
+1. Copy the closest existing profile (`references/journal-hydrogeology.md` for author–year journals, `references/journal-tim.md` for numbered/IEEE journals, or `references/journal-generic.md` as a neutral starting point) to `references/journal-<your-journal>.md`.
+2. Adapt the citation format, abstract structure, equation conventions, and pre-submission checklist to match the journal's author guidelines. Anchor every rule to the guidelines — do not invent formatting rules.
 3. Add the new option to Block 1 of `references/startup-interview.md` so the skill can offer it at session start.
 
-PRs adding journal profiles for *Water Resources Research*, *Journal of Hydrology*, *Hydrology and Earth System Sciences*, *Water Resources Management*, and similar venues are explicitly welcomed — see `CONTRIBUTING.md`.
+PRs adding journal profiles — *Water Resources Research*, *Journal of Hydrology*, *Hydrology and Earth System Sciences*, *Water Resources Management*, or venues in adjacent quantitative fields — are explicitly welcomed and are the easiest way to contribute. See `CONTRIBUTING.md`.
 
 ### Extending to other quantitative-science fields
 

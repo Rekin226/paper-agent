@@ -2,6 +2,24 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-06-17
+
+### Added
+
+- **One-command plugin install.** `paper-agent` is now packaged as a Claude Code plugin. The repo carries its own marketplace, so users can run `/plugin marketplace add Rekin226/paper-agent` then `/plugin install paper-agent@paper-agent` instead of cloning into `~/.claude/skills/`. New files: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`.
+- **Bundled Semantic Scholar MCP.** A root `.mcp.json` defines the citation server as `uvx semantic-scholar-mcp`, so a plugin install wires it up automatically — no separate MCP setup step. Works anonymously; honors `SEMANTIC_SCHOLAR_API_KEY` for higher throughput.
+- **Two more journal targets, widening the audience beyond hydrology.** A new field-agnostic `references/journal-generic.md` lets the skill handle any quantitative-science journal out of the box — IMRaD defaults, SI units, mandatory Limitations subsection — while deferring to the target journal's author guidelines on points that genuinely vary (citation style, word limits, abstract format). Block 1 of the startup interview now offers four targets: HJ, JHRS, IEEE TIM, and generic.
+- **Bundled try-it-in-60-seconds demos** under `examples/` (all synthetic data, clearly labelled). `examples/demo-draft/` turns synthetic CSVs + project notes into manuscript prose via Draft mode (with an auto-detect fast-path preset, `references/preset-demo.md`); `examples/demo-audit/` is a short manuscript seeded with planted inconsistencies plus an answer key, so a new user can watch Audit mode catch them. README gains a "See it in action" before/after section.
+
+### Fixed
+
+- **The IEEE TIM profile is now selectable.** `references/journal-tim.md` already shipped and was listed in SKILL.md's file index, but Block 1 of the startup interview never offered it — so the skill could never actually load it. Block 1 now lists it (`tim`). Also fixed the readiness-summary template, which omitted the Audit mode and only listed HJ/JHRS as journals.
+- **`.docx` features no longer dead-end on local installs.** SKILL.md hard-coded the public `docx` skill at `/mnt/skills/public/docx/SKILL.md`, a cloud-sandbox path absent on local Mac/Linux installs, silently breaking `.docx` reading and export. Both the reading and export steps now detect the `docx` skill at the cloud *or* local (`~/.claude/skills/docx/`) path and fall back to the documented `pandoc → python-docx` pipeline when it is absent, so `.docx` round-trip works in every environment.
+
+### Changed
+
+- README: plugin install is now the recommended Option A (clone/symlink demoted to B/C); Dependencies section corrected to mark the public `docx` skill as optional, document the `pandoc`/`python-docx` fallback, and reflect the bundled MCP. Version badge aligned to the current release.
+
 ## [1.4.0] — 2026-06-10
 
 ### Added
