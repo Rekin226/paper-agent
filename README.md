@@ -183,7 +183,7 @@ The skill ships with named profiles for **Hydrogeology Journal**, **Journal of H
 2. Adapt the citation format, abstract structure, equation conventions, and pre-submission checklist to match the journal's author guidelines. Anchor every rule to the guidelines — do not invent formatting rules.
 3. Add the new option to Block 1 of `references/startup-interview.md` so the skill can offer it at session start.
 
-PRs adding journal profiles — *Water Resources Management*, *Advances in Water Resources*, *Environmental Modelling & Software*, or venues in adjacent quantitative fields — are explicitly welcomed and are the easiest way to contribute. Improving a shipped profile counts too: several were ported from an earlier version of this skill and carry an explicit **"Unverified — confirm before submission"** list of fields that still need checking against the journal's current author guide. Closing those out is a genuinely useful, low-risk first PR. See `CONTRIBUTING.md`.
+PRs adding journal profiles — *Water Resources Management*, *Advances in Water Resources*, *Environmental Modelling & Software*, or venues in adjacent quantitative fields — are explicitly welcomed and are the easiest way to contribute. Improving a shipped profile counts too: `journal-jhydrol.md` and `journal-groundwater.md` were ported from an earlier version of this skill and carry an explicit **"Unverified — confirm before submission"** list of fields that still need checking against the journal's current author guide (Elsevier and Wiley both block automated access, so these need a human with a browser). Closing those out is a genuinely useful, low-risk first PR. See `CONTRIBUTING.md`.
 
 ### Extending to other quantitative-science fields
 
