@@ -2,14 +2,27 @@
 
 Use this style for any `.docx` export of a journal manuscript when the user has
 not specified a journal-specific override. Journal-specific reference files
-(`journal-hydrogeology.md`, `journal-jhrs.md`) may override individual rules —
-follow those overrides where they conflict with this baseline.
+(`journal-hydrogeology.md`, `journal-jhrs.md`, `journal-engineering-geology.md`,
+`journal-tim.md`, `journal-jmbe.md`) may override individual rules — follow those
+overrides where they conflict with this baseline. TIM overrides the most, since it
+uses numeric bracketed citations and IEEE heading conventions.
 
 The pipeline is reproducible: (1) generate tables in LaTeX, (2) convert to
 `.docx` via `pandoc --citeproc`, (3) post-process with `python-docx` to enforce
-the formatting spec below. Do not try to set every property inside `docx-js`
-or pandoc alone — the post-process pass is where the table style, font
-coercion, and line spacing become reliable.
+the formatting spec below. Do not try to set every property in pandoc alone —
+the post-process pass is where the table style, font coercion, and line spacing
+become reliable.
+
+This pipeline is the **Claude Code** path. In **Claude Desktop / claude.ai**, the
+`docx` skill at `/mnt/skills/public/docx/SKILL.md` owns document generation and
+uses `docx-js`; delegate to it there. The spec below still defines what the output
+must look like in either environment — only the mechanism differs. See
+SKILL.md → Environment detection.
+
+Validate the result with
+`"$SKILL_DIR/.venv/bin/python" "$SKILL_DIR/scripts/validate_docx.py" <file>.docx`,
+which checks font coercion, heading styles, sequential numbering, and
+percentage-width tables against this spec.
 
 ---
 

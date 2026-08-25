@@ -79,7 +79,7 @@ Pre-curated queries for the citation workflow. Each query is run once per sectio
 
 - ❌ Invented unit names, coordinates, metric values, or parameter values
 - ❌ Methodologies not present in the cached source files
-- ❌ Fabricated citations or DOIs not returned by Semantic Scholar
+- ❌ Fabricated citations, or any DOI not returned by an OpenAlex lookup
 - ❌ Any reference to `SKILL.md` or preset files in the manuscript output
 
 ## Candidate figure pool (not a prescription)

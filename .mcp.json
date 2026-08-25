@@ -4,6 +4,14 @@
       "type": "stdio",
       "command": "uvx",
       "args": ["semantic-scholar-mcp"]
+    },
+    "openalex": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "openalex-research-mcp"],
+      "env": {
+        "OPENALEX_EMAIL": "your-email@example.com"
+      }
     }
   }
 }

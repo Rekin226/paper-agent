@@ -2,6 +2,28 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] — 2026-08-25
+
+### Added
+
+- **Six new journal profiles, bringing the named set to nine.** Four hydrology titles that the README had been soliciting as contributions: `references/journal-wrr.md` (*Water Resources Research*, AGU/Wiley — mandatory 3-bullet Key Points at ≤140 characters, Plain Language Summary, unnumbered headings), `references/journal-jhydrol.md` (*Journal of Hydrology*, Elsevier — mandatory Highlights at ≤85 characters, trailing-full-stop numbered headings, CRediT), `references/journal-hess.md` (*Hydrology and Earth System Sciences*, EGU/Copernicus — 300-word abstract, the colon-after-authors/year-last Copernicus reference format, "Figure N" rather than "Fig. N", mandatory Data and Code availability sections), and `references/journal-groundwater.md` (*Groundwater*, NGWA/Wiley — ~6,000-word concise format, practitioner-facing register). Plus `references/journal-engineering-geology.md` and `references/journal-jmbe.md`, extending the skill beyond hydrology. Block 1 of the startup interview now groups the ten targets by field and warns explicitly that *Journal of Hydrology* and *Journal of Hydrology: Regional Studies* are different journals with different abstract requirements.
+- **Explicit provenance and verification status on ported profiles.** The four hydrology profiles above were ported from an earlier version of this skill rather than transcribed from current author guides. Each one says so at the top and carries an **"Unverified — confirm before submission"** list naming the fields that still need checking (keyword counts, data-availability wording, figure resolution). Gaps defer to a named baseline profile instead of being filled in with plausible-sounding rules, per the anti-fabrication directive.
+- **Environment detection.** A new section at the top of SKILL.md resolves `$SKILL_DIR` and detects, once per session, whether the public `docx` skill, the bundled venv, and the OpenAlex MCP tools are present, then states the result to the user. When OpenAlex is unavailable the skill now says so at session start, so degraded DOI verification is known before drafting rather than at export.
+- **Bundled `.docx` tooling.** `scripts/extract_docx.py` (section extraction) and `scripts/validate_docx.py` (output format validation) now ship with the skill.
+- **OpenAlex MCP declaration.** `.mcp.json` now also defines `openalex` (`npx -y openalex-research-mcp`) for DOI verification. Optional: no API key, and the skill degrades to Semantic Scholar alone if it is absent. Set `OPENALEX_EMAIL` to your own address to use OpenAlex's polite pool.
+- **Handoff to `paper-figures`** for publication-ready figure generation, with the journal profile supplying the format requirements.
+
+### Fixed
+
+- **Install-agnostic script paths.** SKILL.md referenced the bundled `scripts/` and `.venv` via a hard-coded `~/.claude/skills/paper-agent/...` path, which is wrong for plugin installs (Option A, the recommended one) and for symlinked clones (Option C). All such paths now resolve through `$SKILL_DIR`, discovered at session start.
+- **`.venv/` is now gitignored.** The bundled virtualenv is a build artifact and was not excluded.
+- **Back-matter requirements are no longer stated as if only HJ and JHRS existed.** The Draft-mode guidance and pre-submission checklist named JHRS and HJ as the only journals with mandatory Data Availability and CRediT. They now defer to the loaded journal profile and name the actual requirements per journal, including HESS's mandatory Data and Code availability sections.
+
+### Changed
+
+- README: journal list, architecture tree, dependencies, and MCP configuration updated for the above. The "PRs adding journal profiles" invitation now names venues that are still missing (*Water Resources Management*, *Advances in Water Resources*, *Environmental Modelling & Software*) and points contributors at the "Unverified" lists as a low-risk first PR.
+- The claim that only two style files are hydrology-specific was stale at nine profiles and has been corrected.
+
 ## [1.5.0] — 2026-06-17
 
 ### Added

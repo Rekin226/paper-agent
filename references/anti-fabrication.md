@@ -15,7 +15,7 @@ This applies to all five modes (Draft, Review, Revise, Proofread, Audit) and to 
 Fabrication is anything the agent writes that is presented as fact but is not grounded in one of:
 
 1. A file the agent has read (cached workspace data, source code, the existing .docx manuscript)
-2. A Semantic Scholar–resolved citation
+2. A citation found in Semantic Scholar and resolved in OpenAlex (see SKILL.md → Citation workflow)
 3. Information the user has provided in this session or in a loaded preset
 4. A claim explicitly framed as the agent's interpretation, hedged appropriately
 
@@ -25,9 +25,9 @@ Anything else, regardless of how plausible it sounds, is fabrication.
 
 ### Citations and references
 
-- **Inventing a citation to support a claim.** If a claim needs support and Semantic Scholar returns nothing, the placeholder `[CITATION NEEDED: <topic>]` stays. Do not insert a real-looking but unverified `(Author, Year)` citation. Do not pad reference lists with plausible-sounding entries.
-- **Inventing DOIs.** Use `externalIds.DOI` from Semantic Scholar. If absent, omit the DOI rather than constructing one.
-- **Inventing author names, journal names, or page numbers.** All bibliographic fields come from the Semantic Scholar result.
+- **Inventing a citation to support a claim.** If a claim needs support and neither backend returns a usable paper, the placeholder `[CITATION NEEDED: <topic>]` stays. Do not insert a real-looking but unverified `(Author, Year)` citation. Do not pad reference lists with plausible-sounding entries.
+- **Inventing DOIs.** Every DOI must come from an OpenAlex `doi` field returned in this session. The Semantic Scholar MCP server does not return DOIs at all (verified 2026-08-25 on both `search_papers` and `get_paper`), so a DOI that "came from Semantic Scholar" did not. If OpenAlex cannot resolve the paper, omit the DOI rather than constructing one. **Never assemble a DOI from a pattern**, not from the publisher prefix, not from the journal's other DOIs, not from the article number. A syntactically valid DOI that resolves to nothing, or to a different paper, is worse than no DOI: it survives a spellcheck and fails in front of a reviewer.
+- **Inventing author names, journal names, or page numbers.** All bibliographic fields come from a tool result: authors and title from either backend, DOI and venue from OpenAlex. Page numbers that neither backend returns are omitted, not guessed.
 - **Misattributing claims to real citations.** If you cite Author (Year), the cited paper must actually contain the claim. Do not extend a real citation to cover a claim the paper does not make.
 
 ### Numerical facts
@@ -108,9 +108,9 @@ Every placeholder must include enough description that the user can fix it witho
 
 At the end of each section, report the placeholder count and the list, so nothing is lost.
 
-### 3. Search Semantic Scholar
+### 3. Search the literature
 
-For literature gaps that might be fillable. If a claim needs a citation and the agent has not yet searched, search before writing. Do not write the sentence first and search after — that biases the search toward confirming the sentence rather than testing it.
+For literature gaps that might be fillable. Search Semantic Scholar for the paper, then resolve it in OpenAlex for the DOI and metadata. If a claim needs a citation and the agent has not yet searched, search before writing. Do not write the sentence first and search after — that biases the search toward confirming the sentence rather than testing it.
 
 ### 4. Decline to make the claim
 
@@ -122,14 +122,14 @@ Before showing the user any drafted section, revision proposal, review comment, 
 
 1. **What is the source of this fact?**
    - Cached file? Name the file.
-   - Semantic Scholar citation? Name the result.
+   - Resolved citation? Name the paper and the DOI that OpenAlex returned.
    - User-provided? Name the session input.
    - Hedged interpretation? Verify the hedge is present.
    - None of the above? Fabrication. Fix before presenting.
 
 2. **For every number:** Where did this number come from?
 
-3. **For every citation:** Did Semantic Scholar return this exact paper? Does the paper actually support the claim?
+3. **For every citation:** Did a search actually return this exact paper, and did OpenAlex return this exact DOI? Does the paper actually support the claim?
 
 4. **For every "well-known", "established", "previous studies have shown":** Where is the citation?
 
