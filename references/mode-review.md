@@ -26,7 +26,25 @@ A bad review:
 1. **Read the full manuscript.** The extraction from SKILL.md → "Reading existing manuscripts" must be complete before review begins. If the extraction reported integrity issues (orphan citations, figure/table gaps), note them — they go in the report.
 2. **Identify the core contribution.** In one sentence, state what this paper claims to contribute. If you cannot state it clearly, that itself is the first Major comment.
 3. **Load the journal reference file** and check compliance. Every compliance failure is a comment.
-4. **Verify existing citations** via Semantic Scholar. Pick 5–10 of the in-text citations and search for them. If any cannot be resolved (wrong year, nonexistent paper, misattributed), flag as Major. Do not attempt to verify every citation — this is a sampling check.
+4. **Verify the reference list against a live index.** This is no longer a sampling check: every DOI in the manuscript can be verified in a couple of calls.
+
+   The extractor already pulled the DOIs out. Take `reference_dois` from:
+   ```bash
+   "$SKILL_DIR/.venv/bin/python" \
+     "$SKILL_DIR/scripts/extract_docx.py" <manuscript.docx> --json
+   ```
+   and pass them to `mcp__openalex__batch_resolve_references` in batches of 20. The response gives `requested`, `resolved`, and a per-entry result; an unresolvable DOI comes back as `{"id": "...", "error": "Not found or invalid ID"}`.
+
+   **A resolved DOI is not automatically a correct citation.** Compare the returned `title`, first author, and `publication_year` against what the manuscript's reference entry claims. Three distinct failures to look for:
+   - **Nonexistent DOI** — returns an error. Flag as **Critical**: a fabricated reference.
+   - **DOI resolves but points elsewhere** — returned title or author does not match the entry. Flag as **Critical**: it will send readers to the wrong paper, and it is the signature of a citation invented and then given a borrowed DOI.
+   - **Metadata drift** — right paper, wrong year or a misspelled author. Flag as **Minor**.
+
+   For `references_without_doi` entries, fall back to a title lookup with `mcp__openalex__search_works` (`exact_phrase: true`), or `mcp__semantic-scholar__search_papers_match`. Sample 5–10 of these rather than checking all; without a DOI, verification is slower and more ambiguous.
+
+   Report the counts. "18 of 20 DOIs resolved, 2 unresolvable" is a far stronger finding than "sampled 5 citations, looked fine".
+
+   **If `mcp__openalex__*` is unavailable** (Claude Desktop / claude.ai without an OpenAlex connector), batch DOI verification cannot run. Fall back to sampling 5–10 in-text citations with `mcp__semantic-scholar__search_papers_match` and checking that the paper exists and the author/year match. State in the report that DOI existence was **not verified** and why. Do not report an unverified reference list as clean.
 5. **Run the figure necessity assessment** (SKILL.md → Figure Specifications) against every figure in the manuscript. Figures that fail the assessment become review comments recommending removal or consolidation.
 
 ## Review report format
@@ -79,7 +97,6 @@ citation gaps, optional figure improvements, non-critical style nits.>
  - Equation formatting and symbol definition gaps
  - Figure/table caption quality
  - **AI-style markers** per `references/anti-ai-style.md`: count em-dashes in body prose, list hedge openers ("Importantly,", "Of note,", "It is worth noting that"), filler intensifiers ("very", "particularly"), and instances of "utilize"/"leverage". If the manuscript shows multiple of these patterns, flag it as a Major comment recommending a Proofread pass before submission, since reviewers increasingly recognize and penalize AI-style prose.
- - **Provenance-leak tells** per `references/anti-ai-style.md`: code-file paths or script names in the narrative (e.g. "implemented in `experiments/...py`") and unresolved cross-reference labels (`[eq:...]`, `\ref{...}`, `{#eq-...}`). Either one is a Major comment — a reviewer reads them as evidence the text was machine-assembled and not proofread. Note that code locations belong only in the Code Availability statement and labels must render as "Eq. (N)" / "Fig. N" / "Table N".
 
 If the manuscript needs professional language editing, say so explicitly.>
 
@@ -92,8 +109,11 @@ abstract / Highlights / KMZ requirement" checks live.>
 
 ## 7. Citation integrity
 
-<Report from the 5–10 citation sample check:
- - N citations verified via Semantic Scholar
+<Report from the reference verification:
+ - N of M DOIs resolved via OpenAlex batch_resolve_references
+ - N unresolvable DOIs (fabricated references) — list them
+ - N DOIs resolving to a different paper than the entry claims — list them
+ - N no-DOI entries sampled by title lookup
  - N resolved correctly
  - N with issues (listed with specifics)
  - Orphan citations from extraction (in text but not in reference list)

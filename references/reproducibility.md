@@ -1,6 +1,6 @@
 # Reproducibility — Data, Code, and Methods Replicability
 
-Read this when drafting Methods, when drafting the back matter (Data Availability, Code Availability, Acknowledgements), and when reviewing or revising any manuscript that will be submitted to HJ or JHRS. Both journals require Data Availability Statements; both encourage Code Availability Statements; reviewers increasingly require them.
+Read this when drafting Methods, when drafting the back matter (Data Availability, Code Availability, Acknowledgements), and when reviewing or revising any manuscript for any of the supported journals. All of them require a Data Availability Statement and encourage a Code Availability Statement; reviewers increasingly require both. Check the loaded journal profile for the title-specific wording and placement.
 
 A paper that fails reproducibility standards can pass peer review but get retracted later, or get cited as an example of poor practice. Get this right.
 
@@ -57,7 +57,7 @@ Format options, in descending order of preference:
 
 ## Code Availability Statement
 
-Both journals strongly encourage. JHRS in particular flags missing code statements as a desk-rejection trigger for computational papers.
+Strongly encouraged across the supported journals. JHRS in particular flags missing code statements as a desk-rejection trigger for computational papers.
 
 Format:
 

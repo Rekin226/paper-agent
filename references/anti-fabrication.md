@@ -8,14 +8,14 @@ This is the single most important rule in this skill. Read it before any writing
 
 A fabricated fact in an academic manuscript is worse than a missing one. A missing fact is visible and can be fixed. A fabricated fact looks like a real fact and gets cited, repeated, or built upon by readers who trust the source. The agent's job is to produce text the user can defend to a reviewer or an examination committee. Every sentence must be traceable to a real source.
 
-This applies to all five modes (Draft, Review, Revise, Proofread, Audit) and to every kind of content the agent produces.
+This applies to all six modes (Draft, Review, Revise, Proofread, Audit, Format) and to every kind of content the agent produces.
 
 ## What counts as fabrication
 
 Fabrication is anything the agent writes that is presented as fact but is not grounded in one of:
 
 1. A file the agent has read (cached workspace data, source code, the existing .docx manuscript)
-2. A Semantic Scholar–resolved citation
+2. A citation found in Semantic Scholar and resolved in OpenAlex (see SKILL.md → Citation workflow)
 3. Information the user has provided in this session or in a loaded preset
 4. A claim explicitly framed as the agent's interpretation, hedged appropriately
 
@@ -25,9 +25,9 @@ Anything else, regardless of how plausible it sounds, is fabrication.
 
 ### Citations and references
 
-- **Inventing a citation to support a claim.** If a claim needs support and Semantic Scholar returns nothing, the placeholder `[CITATION NEEDED: <topic>]` stays. Do not insert a real-looking but unverified `(Author, Year)` citation. Do not pad reference lists with plausible-sounding entries.
-- **Inventing DOIs.** Use `externalIds.DOI` from Semantic Scholar. If absent, omit the DOI rather than constructing one.
-- **Inventing author names, journal names, or page numbers.** All bibliographic fields come from the Semantic Scholar result.
+- **Inventing a citation to support a claim.** If a claim needs support and neither backend returns a usable paper, the placeholder `[CITATION NEEDED: <topic>]` stays. Do not insert a real-looking but unverified `(Author, Year)` citation. Do not pad reference lists with plausible-sounding entries.
+- **Inventing DOIs.** Every DOI must come from an OpenAlex `doi` field returned in this session. The Semantic Scholar MCP server does not return DOIs at all (verified 2026-08-25 on both `search_papers` and `get_paper`), so a DOI that "came from Semantic Scholar" did not. If OpenAlex cannot resolve the paper, omit the DOI rather than constructing one. **Never assemble a DOI from a pattern**, not from the publisher prefix, not from the journal's other DOIs, not from the article number. A syntactically valid DOI that resolves to nothing, or to a different paper, is worse than no DOI: it survives a spellcheck and fails in front of a reviewer.
+- **Inventing author names, journal names, or page numbers.** All bibliographic fields come from a tool result: authors and title from either backend, DOI and venue from OpenAlex. Page numbers that neither backend returns are omitted, not guessed.
 - **Misattributing claims to real citations.** If you cite Author (Year), the cited paper must actually contain the claim. Do not extend a real citation to cover a claim the paper does not make.
 
 ### Numerical facts
@@ -108,9 +108,9 @@ Every placeholder must include enough description that the user can fix it witho
 
 At the end of each section, report the placeholder count and the list, so nothing is lost.
 
-### 3. Search Semantic Scholar
+### 3. Search the literature
 
-For literature gaps that might be fillable. If a claim needs a citation and the agent has not yet searched, search before writing. Do not write the sentence first and search after — that biases the search toward confirming the sentence rather than testing it.
+For literature gaps that might be fillable. Search Semantic Scholar for the paper, then resolve it in OpenAlex for the DOI and metadata. If a claim needs a citation and the agent has not yet searched, search before writing. Do not write the sentence first and search after — that biases the search toward confirming the sentence rather than testing it.
 
 ### 4. Decline to make the claim
 
@@ -122,14 +122,14 @@ Before showing the user any drafted section, revision proposal, review comment, 
 
 1. **What is the source of this fact?**
    - Cached file? Name the file.
-   - Semantic Scholar citation? Name the result.
+   - Resolved citation? Name the paper and the DOI that OpenAlex returned.
    - User-provided? Name the session input.
    - Hedged interpretation? Verify the hedge is present.
    - None of the above? Fabrication. Fix before presenting.
 
 2. **For every number:** Where did this number come from?
 
-3. **For every citation:** Did Semantic Scholar return this exact paper? Does the paper actually support the claim?
+3. **For every citation:** Did a search actually return this exact paper, and did OpenAlex return this exact DOI? Does the paper actually support the claim?
 
 4. **For every "well-known", "established", "previous studies have shown":** Where is the citation?
 
@@ -148,3 +148,67 @@ The user is a researcher who will defend this manuscript to reviewers, examinati
 A draft with twenty `[CITATION NEEDED]` placeholders is more useful than a draft with twenty plausible-sounding fabricated citations. The placeholders are honest and fixable. The fabrications are dishonest and dangerous.
 
 When in doubt: ask, flag, search, or decline. Never invent.
+
+---
+
+# HARD RULES — provenance (added 2026-09-02 after a real failure)
+
+These exist because the anti-fabrication directive above was already in force and a wrong number
+still reached a finished manuscript. Prose rules did not stop it. These are mechanical and they are
+not optional.
+
+## Rule 1 — Matching the previous draft is NOT verification
+
+The failure: a numeric diff was run between the old-journal draft and the retargeted draft, every
+number matched, and that was reported as a clean check. It only proved nothing was corrupted in
+transit. The wrong number was already in the source draft and passed straight through.
+
+**A number is verified only against the data or the code that produces it.** Never against an
+earlier version of the same manuscript, never against `RESULTS.md` or any other prose summary, and
+never against your own earlier statement in the conversation.
+
+When you report a check, name what it was against. "Consistent with the previous draft" and
+"traced to `results/arms.csv`" are different claims and must not be worded alike.
+
+## Rule 2 — Never explain a computed number without reading the code that computes it
+
+The failure: two numbers differed; a mechanism was asserted from plausibility; the codebase said
+something else in a comment. Two wrong explanations were written into the manuscript.
+
+Before writing any sentence of the form "X differs from Y because …" about computed values, open
+the function that produces each. If you cannot locate it, the manuscript says the two values differ
+and does not say why. An unexplained difference is honest. A confidently wrong mechanism is not.
+
+## Rule 3 — Severity is a claim and needs the same evidence as any other
+
+The failure: three findings were reported as Major; one was a defect and two were correct numbers
+that merely looked confusing. Inflated severity is a false claim about the manuscript.
+
+A finding is a **defect** only if a value is wrong, a claim is unsupported, or a rule is broken.
+"Two correct numbers could confuse a reader" is a **presentation** finding. Say which it is. If a
+re-check downgrades a finding, say so plainly and say what you got wrong.
+
+## Rule 4 — The numeric provenance gate is mandatory before export
+
+Run it. It fails the build:
+
+```bash
+"$SKILL_DIR/.venv/bin/python" \
+  "$SKILL_DIR/scripts/verify_numbers.py" MANUSCRIPT \
+  --results RESULTS_DIR --ledger provenance_ledger.json --strict
+```
+
+Every number in the body must either appear in a machine-readable results file or carry a ledger
+entry naming a real source. `--strict` additionally fails any ledger entry whose source is null,
+which is how unresolved conflicts and print-only values stay visible instead of quietly passing.
+
+The ledger is a record, not a silencer. An entry that says `"unresolved": "CONFLICT: ..."` keeps the
+strict gate red until someone resolves it. Never add a ledger entry to make the gate green.
+
+## Rule 5 — Report the red state
+
+Do not open a summary with what passed. Lead with what is unverified, conflicting, or unresolved,
+and give the count. A validator result is reported as its exit code and its failures, never as a
+score with the failures explained away underneath. If nothing is wrong, say that in one line; do
+not manufacture reassurance, and do not congratulate the work.
+

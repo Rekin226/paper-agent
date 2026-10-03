@@ -22,7 +22,7 @@ In both cases, the agent is proposing edits, not making them. Every suggestion m
 5. **If the Introduction is being revised**, also load `references/introduction-structure.md` and verify the proposed AFTER preserves or restores the five-move funnel.
 6. **If Methods or back matter is being revised**, load `references/reproducibility.md` and verify the proposed AFTER meets the replicability standard for data sources, software versions, calibration/validation, and back matter completeness.
 7. **Run the figure necessity assessment** on existing figures (SKILL.md → Figure Specifications). Figures that fail become revision suggestions recommending removal or consolidation.
-8. **For any new factual claim in a proposed AFTER block, resolve the citation via Semantic Scholar first.** Never propose inserting a `[CITATION NEEDED]` or a fabricated reference. If no real paper supports the claim, do not propose the claim.
+8. **For any new factual claim in a proposed AFTER block, resolve the citation first** via the two-backend workflow in SKILL.md: Semantic Scholar to find the paper, OpenAlex to get its DOI. Never propose inserting a `[CITATION NEEDED]` or a fabricated reference. If no real paper supports the claim, do not propose the claim.
 
 ## Section-by-section pause protocol
 
@@ -57,7 +57,7 @@ Every proposal uses this exact structure:
 <2–4 sentences explaining why this change is needed, what it fixes, and
 (if reviewer-driven) how it addresses the reviewer's concern. Cite the
 journal style rule or the cached project fact that motivates the change.
-If a new citation is added, name the resolved Semantic Scholar reference
+If a new citation is added, name the resolved reference and its OpenAlex DOI
 and show its DOI.>
 
 **Side effects:**

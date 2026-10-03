@@ -20,6 +20,37 @@ Read this file before writing any prose in Draft mode, before composing any AFTE
 - **Vague qualifiers as substitutes for evidence:** "robust", "comprehensive", "novel", "innovative", "state-of-the-art", "cutting-edge", "leverages", "utilizes". Show the property; do not claim it. "Utilizes" is almost never better than "uses".
 - **Recap-and-pivot sentences:** "As discussed above...", "Building on the previous section...", "Having established X, we now turn to Y". Reviewers can read. Trust them.
 
+### Forward references — the reader cannot follow them
+
+**A body section must not send the reader to a section they have not read yet.** This is the single most disruptive habit in machine-drafted manuscripts, and it is easy to introduce without noticing because the agent holds the whole document in view while the reader does not.
+
+The reader meets "(see Section 2.5.4)" in §2.4 and has no good option: jump ahead and lose the thread, or carry an unresolved promise. Either way the sentence has failed to stand on its own. A *backward* reference has no such cost — the reader has already been there — so those are fine and often helpful.
+
+Bad, all real examples:
+- "IDW was chosen … on the basis of the cross-validation described in Section 2.5.4." (in §2.4)
+- "Every interpolator compared in Section 2.5.4 was fitted on the same coordinates." (in §2.4)
+- "…is statistically significant; the supporting test is reported in Section 3.4.4." (in §3.2)
+- "…sensitivity to the percentile pair is assessed separately in Section 2.5.5." (in §2.5.3)
+
+The fix is always the same: **state the substance instead of pointing at it.** Usually this costs nothing, because the pointer was standing in for a fact that is shorter than the pointer.
+
+- "…on the basis of the cross-validation described in Section 2.5.4" → "…on the basis of a leave-one-out cross-validation of all three"
+- "Every interpolator compared in Section 2.5.4" → "Every interpolator compared in this study"
+- "…significant; the supporting test is reported in Section 3.4.4" → "…significant (Moran's I, permutation p ≤ 0.023 in both bands)"
+- "…is assessed separately in Section 2.5.5" → "…is a separate question and is not addressed by this procedure"
+
+Where the pointer carries evidence, inline the number. A short duplicated statistic is cheaper than a broken reading order, and Results sections routinely restate a key value where it bears on the claim.
+
+Three exemptions:
+
+1. **The Introduction.** Its closing roadmap ("the methods (Section 2), results (Section 3)…") is a journal convention and a required move of the funnel. Introductions may also point forward to where a question is taken up.
+2. **Backward references** anywhere. Keep them.
+3. **The Conclusion** is exempt by construction — it is last, so all its references point backward.
+
+Everything between — Methods, Results, Discussion — follows the rule. That includes section-opening roadmaps inside the body ("The Discussion is organized in four parts. Section 4.1 interprets…"): the headings a line later already do that work, so the paragraph is pure forward reference and should be cut.
+
+Apply the same test to tables and figures where it is cheap. A Methods sentence citing "Table 2" from the Results is a forward reference; if the sentence works without the pointer, drop it.
+
 ### Structural tells
 
 - **Three-item lists for everything.** "X, Y, and Z" appears in every paragraph. Real argument sometimes lists two things, sometimes four, sometimes none. Vary it.
@@ -33,14 +64,6 @@ Read this file before writing any prose in Draft mode, before composing any AFTE
 - **Bothsidesism caveats.** "While the model performs well in most cases, there are also instances where performance is more limited." If the result has nuance, say what the nuance actually is, with numbers. Vague even-handedness reads as AI-trained politeness, not scientific honesty.
 - **Excessive contextualization.** AI tends to set up every claim with a paragraph of background that a domain reader does not need. Trust the reader.
 - **Performative humility.** "We acknowledge that..." or "Future work could explore..." in places where the work was not actually limited. Limitations belong in the Limitations subsection, in plain language, not sprinkled apologetically through Results.
-
-### Provenance-leak tells
-
-These betray that the manuscript was assembled from a code repository or a LaTeX/internal source rather than written as prose. A reviewer who sees a script path or an unresolved label token in the body immediately recognizes machine-assembled text. Treat them as seriously as any phrase tell.
-
-- **Code-file paths and script names in body prose.** "The sweep is implemented in `experiments/11_wavelength_sweep.py`." A filename, module path, function name, notebook, CLI flag, config key, source variable name, or repository directory must never appear in the Methods, Results, or Discussion narrative. Describe the *method*, not the file that runs it: "We swept the excitation wavelength from 400 to 700 nm in 5 nm steps." Code locations belong in exactly one place — the **Code Availability** statement (see `references/reproducibility.md`), which points at the repository as a whole, not at individual files inline. A commit hash is fine in Code Availability; it is never part of the narrative.
-- **Raw internal cross-reference labels.** "...relaxes the homoscedastic white-noise assumption of `[eq:phys_kernel]`." Tokens of the form `[eq:...]`, `[fig:...]`, `[tab:...]`, `[sec:...]`, `\ref{...}`, `\eqref{...}`, `\cref{...}`, or `{#eq-...}` are internal labels that were never resolved. They must render as the journal's cross-reference form: "Eq. (3)", "Fig. 4", "Table 2", "Section 2.1". Never let a bracketed label or backslash-ref command survive into prose. If the number it should resolve to is unknown, that is a fabrication risk — stop and resolve it against the actual numbered object per `references/anti-fabrication.md`; do not guess a number and do not leave the token in place.
-- **Placeholder and template residue.** `<N>`, `[TODO]`, `XXX`, `<model name>`, "as shown in the figure above/below" (figures are numbered, not positional), and "see the attached script" are repository or template artifacts. None survive into a draft presented to the user.
 
 ## What to do instead
 
@@ -79,8 +102,7 @@ Before presenting any drafted or revised section, scan the output and answer:
 6. **Vague qualifiers?** Search for "robust", "comprehensive", "novel", "significant" used without a specific evidence anchor. Replace with the evidence.
 7. **Recap sentences?** Search for "As discussed", "As noted above", "Having established". Cut.
 8. **First word of each paragraph in this section?** If most paragraphs start with "The", "This", "These", or "Furthermore", you are pattern-matching. Vary.
-9. **Code paths in prose?** Search the section for `.py`, `.ipynb`, `.m`, `.R`, `/`, and source function/module names. Zero in body prose. Any genuine code location moves to the Code Availability statement.
-10. **Raw label tokens?** Search for `[eq:`, `[fig:`, `[tab:`, `[sec:`, `\ref`, `\eqref`, `\cref`, `{#`. Zero. Each must already be a rendered "Eq. (N)" / "Fig. N" / "Table N" / "Section N".
+9. **Forward references?** For every "Section X.Y" outside the Introduction, compare it with the section it sits in. If the target number is higher, rewrite the sentence to state the substance. Should be zero in Methods, Results and Discussion.
 
 If any check fails, revise before presenting.
 
@@ -94,8 +116,7 @@ If any check fails, revise before presenting.
 - Search for em-dashes in body prose. Each one is an edit candidate (replace with comma, parentheses, or sentence break).
 - Search for hedge openers and filler intensifiers. Each is an edit candidate.
 - Search for "utilize" and "leverage". Each is an edit candidate (replace with "use").
-- Search for code-file paths (`.py`, `.ipynb`, module/function names, repository directories) in body prose. Each is an edit candidate: rewrite the sentence to describe the method, and move any genuine code location to the Code Availability statement. This is the one structural-looking change Proofread may make, because the path carries no scientific content.
-- Search for raw cross-reference labels (`[eq:...]`, `[fig:...]`, `\ref{}`, `\eqref{}`, `{#eq-...}`). Each is an edit candidate: replace with the rendered reference ("Eq. (N)", "Fig. N", "Table N"). If the target number cannot be confirmed from the manuscript, flag it for the user rather than guessing.
 - Flag any paragraph that consists entirely of three-item lists for the user to decide.
+- Map every "Section X.Y" reference to the section containing it and flag the forward ones. Rewriting them to state the substance is in scope only when the substituted fact already appears in the manuscript; if it does not, flag for Revise rather than inventing it.
 
 Proofread is the only mode where you can fix these without changing meaning. Do not strip flavor or break the author's voice. If a sentence reads as deliberately written by the author and falls within their style, leave it. The targets are the patterns that mark text as machine-produced, not all formal academic phrasing.

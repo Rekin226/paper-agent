@@ -13,6 +13,9 @@ Ask the user exactly this:
 > 3. **Revise** — read an existing .docx manuscript and suggest section-by-section revisions (with or without reviewer comments)
 > 4. **Proofread** — read an existing .docx manuscript and produce a language-level polish (no scientific restructuring)
 > 5. **Audit** — read an existing .docx manuscript and report consistency and coherence issues across sections (numerical, terminological, cross-reference, argument-chain). Output is a severity-tagged report; the user fixes issues via Revise mode.
+> 6. **Format** — bring an existing .docx to submission-ready presentation for the target journal (continuous line numbers, page numbers, double spacing, single column) and build the separate files the submission system needs (highlights, graphical abstract). Changes presentation only, never a word of text.
+
+If the user arrived because a journal returned the manuscript for formatting, or asks any form of "is this ready to submit", the answer is **Format**. Say so and proceed rather than making them choose.
 
 Based on the answer, load the corresponding mode reference file immediately:
 - Draft → stay in SKILL.md body (no extra file needed)
@@ -20,6 +23,7 @@ Based on the answer, load the corresponding mode reference file immediately:
 - Revise → `references/mode-revise.md`
 - Proofread → `references/mode-proofread.md`
 - Audit → `references/mode-audit.md`
+- Format → `references/mode-format.md`
 
 **Do not proceed to Block 1 until the mode is confirmed.**
 
@@ -27,12 +31,48 @@ Based on the answer, load the corresponding mode reference file immediately:
 
 > Which journal is this manuscript for?
 >
+> *Hydrology and water resources*
 > 1. **Hydrogeology Journal** (Springer / IAH) — `hj`
 > 2. **Journal of Hydrology: Regional Studies** (Elsevier) — `jhrs`
-> 3. **IEEE Transactions on Instrumentation and Measurement** (IEEE) — `tim`
-> 4. **Other quantitative-science journal** — `generic` (paste the author guidelines if you have them)
+> 3. **Journal of Hydrology** (Elsevier) — `jhydrol`
+> 4. **Water Resources Research** (AGU / Wiley) — `wrr`
+> 5. **Hydrology and Earth System Sciences** (EGU / Copernicus) — `hess`
+> 6. **Groundwater** (NGWA / Wiley) — `gw`
+>
+> *Other fields*
+> 7. **Engineering Geology** (Elsevier) — `eg`
+> 8. **IEEE Trans. Instrumentation and Measurement** (IEEE) — `tim`
+> 9. **J. Medical and Biological Engineering** (Springer) — `jmbe`
+> 10. **Physiological Measurement** (IOP / IPEM) — `pm`
+>
+> 11. **Any other quantitative-science journal** — `generic`
+>     (paste the author guidelines; they override the generic baseline)
+>
+> Options 2 and 3 are **different journals**. *Journal of Hydrology: Regional Studies*
+> (`jhrs`) uses a structured abstract; *Journal of Hydrology* (`jhydrol`) does not. If the
+> user names "Journal of Hydrology" ambiguously, confirm which one before loading a profile.
 
-Load the matching profile — `references/journal-hydrogeology.md` (`hj`), `references/journal-jhrs.md` (`jhrs`), `references/journal-tim.md` (`tim`), or `references/journal-generic.md` (`generic`) — and keep it in mind throughout the session. For `generic`, also read any author guidelines the user pastes; they override the generic baseline on every point of conflict. All five modes need the journal style: Draft uses it for writing, Review and Revise use it to check compliance, Proofread uses it for terminology rules, Audit uses it for journal-specific consistency checks.
+Load the matching profile and keep it loaded throughout the session:
+
+| Answer | Profile to load |
+|---|---|
+| `hj` | `references/journal-hydrogeology.md` |
+| `jhrs` | `references/journal-jhrs.md` |
+| `jhydrol` | `references/journal-jhydrol.md` |
+| `wrr` | `references/journal-wrr.md` |
+| `hess` | `references/journal-hess.md` |
+| `gw` | `references/journal-groundwater.md` |
+| `eg` | `references/journal-engineering-geology.md` |
+| `tim` | `references/journal-tim.md` |
+| `jmbe` | `references/journal-jmbe.md` |
+| `pm` | `references/journal-physiological-measurement.md` |
+| `generic` | `references/journal-generic.md` |
+
+**Also load `references/submission-format.md`, in every mode, as soon as the journal is named.** The journal profile covers article style; that file covers the presentation layer editorial offices enforce and author guides routinely omit. A journal profile that says nothing about line numbers, page numbers or line spacing is not telling you they are unnecessary.
+
+If the answer is option 11, load `references/journal-generic.md` and ask for the author guidelines. Those guidelines override the generic baseline; the baseline covers only what genuinely does not vary between journals. Flag every extrapolation. Never invent a journal rule.
+
+**TIM changes the citation mechanics.** It uses numeric bracketed citations (`[1]`) in citation order, not author-year. If `tim` is selected, the citation workflow in `SKILL.md` still applies but the insertion format and reference ordering come from `references/journal-tim.md`. All six modes need the journal style: Draft uses it for writing, Review and Revise use it to check compliance, Proofread uses it for terminology rules, Audit uses it for journal-specific consistency checks.
 
 ---
 
@@ -105,7 +145,7 @@ If mode is Review, Revise, Proofread, or Audit, replace Blocks 2–5 with the fo
 
 > Give me the path to the `.docx` manuscript you want me to work on.
 
-Verify the file exists. If it's a `.doc` (legacy), convert to `.docx` first via the public docx skill before continuing.
+Verify the file exists. If it's a `.doc` (legacy), convert it first with `pandoc <file>.doc -o <file>.docx` before continuing.
 
 ### Block 3′ — Manuscript extraction
 
@@ -131,14 +171,33 @@ If the user pastes reviewer comments, number them sequentially and cache them. E
 
 ---
 
+## Format mode path
+
+Blocks 2′ and 3′ from the non-Draft path apply: get the manuscript path, run the
+extraction protocol, present the summary, wait for confirmation.
+
+### Block 4″ — Format-specific questions
+
+Ask the user:
+
+> 1. Which separate files does this submission need, and which have you **already uploaded** in the submission system? Highlights, graphical abstract, supplementary data, cover letter, blinded copy. I can see what is on disk, but not what reached the portal.
+> 2. Is this a first submission, or a resubmission after a desk return? If it was returned, paste the editorial office's message so I can check each item they named.
+> 3. Is the manuscript built from source (Markdown, LaTeX, a build script), or is the .docx the only copy? If there is a build pipeline, the fix goes there so it survives the next rebuild.
+
+Then follow `references/mode-format.md`. Diagnose with the validator before
+changing anything, and show the user its output verbatim.
+
+---
+
 ## Confirm readiness (all modes)
 
 After all applicable blocks are complete, report:
 
-> **Mode:** [Draft / Review / Revise / Proofread / Audit]
-> **Journal:** [HJ / JHRS / TIM / generic]
+> **Mode:** [Draft / Review / Revise / Proofread / Audit / Format]
+> **Journal:** [selected journal]
 > **[Draft-specific]** Data loaded: [summary of cached values, N stations/samples, period, study area]. [N] limitation items cached.
 > **[Non-Draft]** Manuscript loaded: <filename>. [extraction summary].
-> Semantic Scholar citation resolution active. Ready to proceed — confirm to begin.
+> Environment: <Claude Code | Claude Desktop / claude.ai>
+> Citation resolution: <Semantic Scholar + OpenAlex (DOIs verified) | Semantic Scholar only (DOIs NOT verified, manual pass needed before submission)>. Ready to proceed — confirm to begin.
 
 Wait for explicit confirmation before acting.

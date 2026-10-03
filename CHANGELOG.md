@@ -2,6 +2,47 @@
 
 All notable changes to `paper-agent` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] — 2026-10-03
+
+### Added
+
+- **Format mode, the sixth mode.** `references/mode-format.md` brings an existing `.docx` to submission-ready presentation for a named journal (continuous line numbers, page numbers, double spacing, single column), builds the separate files the submission system needs, and reports compliance in two layers. It changes presentation only and proves it with a before/after word count and text hash. The startup interview routes any form of "is this ready to submit", or a desk return from an editorial office, straight to this mode.
+- **Submission-format directive and baseline.** New `references/submission-format.md`, loaded alongside every journal profile in every mode. Its governing rule: silence in a journal's guide for authors is not evidence that nothing is required. Prompted by a real desk return from *Engineering Geology* for missing line and page numbers, neither of which appears anywhere in that journal's guide. The skill no longer says "the format meets the journal requirements"; it reports article style and submission presentation as separate layers and always asks which separate files were actually uploaded, since that cannot be read from the filesystem. Every journal profile's pre-submission checklist now opens with this presentation block.
+- **Three new scripts.** `scripts/apply_submission_format.py` stamps line numbers, a footer `PAGE` field and double spacing onto any `.docx` (idempotent, presentation only). `scripts/make_highlights_docx.py` builds the separate editable highlights file and enforces bullet count and per-bullet character cap. `scripts/verify_numbers.py` is a numeric provenance gate: every number in the manuscript body must trace to a machine-readable results file or a ledger entry naming a real source, and `--strict` keeps unresolved entries red.
+- **`scripts/validate_docx.py` checks submission presentation**: continuous line numbers, page-number field, body line spacing, and single-column layout, plus `--figures-separate` for publishers that want images out of the manuscript and captions listed at the end.
+- **Physiological Measurement profile** (`references/journal-physiological-measurement.md`, IOP / IPEM), verified 2026-09-01 against the journal's IOP publishing-support pages: structured Objective / Approach / Main results / Significance abstract, 8000-word research papers, IOP Harvard citations with unpunctuated `et al`, lowercase "figure 1", and policies that only appear on the About page.
+- **Provenance hard rules in `references/anti-fabrication.md`**, added after a wrong number reached a finished manuscript despite the existing directive: matching a previous draft is not verification; never explain a difference between computed values without reading the code that computes them; severity is a claim and needs evidence; the provenance gate is mandatory before export; reports lead with what is unverified. Draft mode's pre-export checklist now runs the gate.
+- **`package_for_claude_ai.sh`** builds a claude.ai-compatible upload zip (quoted frontmatter, no `allowed-tools`, description length checked) from a clone.
+
+### Changed
+
+- **Engineering Geology profile verified against the live guide** (2026-08-25, with figure and artwork rules re-checked 2026-09-11 against the Elsevier artwork pages it links to). The 250-word abstract cap, title-page fields, file-format rules and acknowledgement placement are now quoted rather than flagged unverified. "Your Paper Your Way" is **not** offered by this journal, and figures go out of the manuscript file with captions listed after the references.
+- SKILL.md frontmatter description rewritten as a folded block and kept under claude.ai's 1024-character limit. Em dashes in SKILL.md prose replaced with colons and commas.
+- SKILL.md's file index now matches the verified HESS and WRR profiles; it still carried the pre-verification claims (300-word HESS abstract, exactly three WRR Key Points, unnumbered WRR headings).
+
+## [1.6.0] — 2026-08-25
+
+### Added
+
+- **Six new journal profiles, bringing the named set to nine.** Four hydrology titles that the README had been soliciting as contributions: `references/journal-wrr.md` (*Water Resources Research*, AGU/Wiley — mandatory 3-bullet Key Points at ≤140 characters, Plain Language Summary, unnumbered headings), `references/journal-jhydrol.md` (*Journal of Hydrology*, Elsevier — mandatory Highlights at ≤85 characters, trailing-full-stop numbered headings, CRediT), `references/journal-hess.md` (*Hydrology and Earth System Sciences*, EGU/Copernicus — 300-word abstract, the colon-after-authors/year-last Copernicus reference format, "Figure N" rather than "Fig. N", mandatory Data and Code availability sections), and `references/journal-groundwater.md` (*Groundwater*, NGWA/Wiley — ~6,000-word concise format, practitioner-facing register). Plus `references/journal-engineering-geology.md` and `references/journal-jmbe.md`, extending the skill beyond hydrology. Block 1 of the startup interview now groups the ten targets by field and warns explicitly that *Journal of Hydrology* and *Journal of Hydrology: Regional Studies* are different journals with different abstract requirements.
+- **HESS and Water Resources Research verified against the publishers' live author guidelines** (Copernicus submission guidelines and AGU text requirements, both read 2026-08-25). Verification overturned several rules carried over from the older profile, which are now corrected: HESS states **no abstract word limit and no body word limit** (the old profile asserted 300 words), its in-text citation order is **the author's choice** rather than alphabetical, and it does **not** require "Figure N" over "Fig. N". WRR allows **one to three** Key Points, not exactly three; its Plain Language Summary is **optional** for WRR and capped at 200 words, not 100–150; and its sections **are numbered** with Arabic numerals to four levels, where the old profile claimed unnumbered headings. Both profiles also gained mandatory requirements they had missed entirely: HESS's 500-character short summary and its required Author contribution and Competing interests sections; WRR's mandatory Open Research availability statement, its publication-unit length accounting (1 PU = 500 words *or* one display element), and its ban on "available from the authors" statements.
+- **Explicit provenance and verification status on ported profiles.** `journal-jhydrol.md` and `journal-groundwater.md` were ported from an earlier version of this skill rather than transcribed from current author guides; Elsevier and Wiley both block automated access to their guides, so these two could not be verified in this pass. Each says so at the top and carries an **"Unverified — confirm before submission"** list naming the fields that still need checking. Gaps defer to a named baseline profile instead of being filled in with plausible-sounding rules, per the anti-fabrication directive.
+- **Environment detection.** A new section at the top of SKILL.md resolves `$SKILL_DIR` and detects, once per session, whether the public `docx` skill, the bundled venv, and the OpenAlex MCP tools are present, then states the result to the user. When OpenAlex is unavailable the skill now says so at session start, so degraded DOI verification is known before drafting rather than at export.
+- **Bundled `.docx` tooling.** `scripts/extract_docx.py` (section extraction) and `scripts/validate_docx.py` (output format validation) now ship with the skill.
+- **OpenAlex MCP declaration.** `.mcp.json` now also defines `openalex` (`npx -y openalex-research-mcp`) for DOI verification. Optional: no API key, and the skill degrades to Semantic Scholar alone if it is absent. Set `OPENALEX_EMAIL` to your own address to use OpenAlex's polite pool.
+- **Handoff to `paper-figures`** for publication-ready figure generation, with the journal profile supplying the format requirements.
+
+### Fixed
+
+- **Install-agnostic script paths.** SKILL.md referenced the bundled `scripts/` and `.venv` via a hard-coded `~/.claude/skills/paper-agent/...` path, which is wrong for plugin installs (Option A, the recommended one) and for symlinked clones (Option C). All such paths now resolve through `$SKILL_DIR`, discovered at session start.
+- **`.venv/` is now gitignored.** The bundled virtualenv is a build artifact and was not excluded.
+- **Back-matter requirements are no longer stated as if only HJ and JHRS existed.** The Draft-mode guidance and pre-submission checklist named JHRS and HJ as the only journals with mandatory Data Availability and CRediT. They now defer to the loaded journal profile and name the actual requirements per journal, including HESS's mandatory Data and Code availability sections.
+
+### Changed
+
+- README: journal list, architecture tree, dependencies, and MCP configuration updated for the above. The "PRs adding journal profiles" invitation now names venues that are still missing (*Water Resources Management*, *Advances in Water Resources*, *Environmental Modelling & Software*) and points contributors at the "Unverified" lists as a low-risk first PR.
+- The claim that only two style files are hydrology-specific was stale at nine profiles and has been corrected.
+
 ## [1.5.0] — 2026-06-17
 
 ### Added

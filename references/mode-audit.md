@@ -93,13 +93,31 @@ Findings here are usually **Minor** unless the inconsistency causes scientific a
 - Every "Table N" reference must have a corresponding table caption.
 - Every "Eq. (N)" reference must have a corresponding numbered equation.
 - Every "Section X.Y" or "§X.Y" reference must point to a real section.
+- Every "Section X.Y" reference outside the Introduction must point *backward*. A body section that cites a later section forces the reader to jump ahead or hold an unresolved promise; report each one with its location and the section it points to. See `references/anti-ai-style.md` for the rule and the exemptions (Introduction roadmap; the Conclusion, which is exempt by construction).
 - Every figure, table, and equation that exists must be referenced in the body at least once.
 - Every reference list entry must be cited in the body at least once.
 - Every in-text citation must have a matching reference list entry.
-- No unresolved label tokens survive in the body: `[eq:...]`, `[fig:...]`, `[tab:...]`, `[sec:...]`, `\ref{...}`, `\eqref{...}`, `\cref{...}`, `{#eq-...}`. Each is a **Critical** finding — the cross-reference never rendered, so the reader cannot tell which object is meant. Report it under this check, not as an AI-style marker.
-- No code-file paths or script names appear in the body (e.g. "implemented in `experiments/...py`"). Code locations belong only in the Code Availability statement. Flag as **Major** under this check.
 
 These integrity checks were partly run during extraction. Audit re-runs them and reports them in the structured format. Findings here are **Critical** for missing figures/tables (you cannot submit a manuscript that references nonexistent content) and **Major** for unused entries (orphan figures or uncited references).
+
+### Check 4b — Reference existence (does the cited work exist?)
+
+Checks 1–4 verify the manuscript is internally consistent. This one verifies it is consistent with reality. A reference list can be perfectly self-consistent and still cite papers that do not exist, which is the single most damaging thing a reviewer can find.
+
+Take `reference_dois` from the extractor's `--json` output and pass them to `mcp__openalex__batch_resolve_references`, 20 at a time. Then compare each resolved record's `title`, first author, and `publication_year` against the manuscript's entry.
+
+| Finding | Severity |
+|---|---|
+| DOI does not resolve | **Critical** — fabricated or malformed reference |
+| DOI resolves to a different paper than the entry describes | **Critical** — misdirects the reader; also the signature of a borrowed DOI |
+| Right paper, wrong year or misspelled author | **Minor** — metadata drift |
+| Entry has no DOI at all | **Minor** — note it; verify by title lookup if the claim it supports is load-bearing |
+
+Report as counts, not prose: `Reference existence: 23 DOIs checked, 21 resolved, 1 unresolvable (Critical), 1 mismatched (Critical), 4 entries without DOI`.
+
+If the manuscript has no DOIs in its reference list at all, say that plainly and mark this check **not run**. Do not report it as passing.
+
+If `mcp__openalex__*` is unavailable in this environment, this check cannot run at all. Mark it **not run (no resolver available)** and say so in the report header, so the user does not read a clean audit as a verified reference list. Sampling a few titles through `mcp__semantic-scholar__search_papers_match` is a partial substitute, not a replacement.
 
 ### Check 5 — Argument honesty
 

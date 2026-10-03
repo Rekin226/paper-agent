@@ -19,7 +19,7 @@ The single most common failure mode for this skill is writing summaries instead 
 - Support every quantitative claim with a value read from the cached workspace files
 - Include enough methodological detail for a peer to independently replicate the study
 - Maintain narrative flow paragraph-to-paragraph within each section (each paragraph follows from the previous)
-- Use real, Semantic Scholar–resolved citations for every literature claim — no bare `(Author, Year)` placeholders, no fabricated DOIs
+- Use real, tool-resolved citations for every literature claim — no bare `(Author, Year)` placeholders, no fabricated DOIs
 - Write as if the manuscript is going directly to journal reviewers today
 
 ## Test before finalising any section
@@ -27,7 +27,7 @@ The single most common failure mode for this skill is writing summaries instead 
 Before presenting a section to the user, ask yourself:
 1. Could a reviewer read this section and understand exactly what was done and what was found?
 2. Is every number in this section traceable to a real cached file, figure, or user-supplied fact?
-3. Is every citation a real paper that Semantic Scholar actually returned?
+3. Is every citation a real paper a search actually returned, with a DOI OpenAlex actually returned?
 4. Are there any sentences a reader would mark as filler?
 
 If any answer is no, revise before presenting.

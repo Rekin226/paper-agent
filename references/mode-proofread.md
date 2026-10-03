@@ -15,7 +15,6 @@ Proofread mode is narrow by design. The agent may fix:
 - Citation format compliance (`(Author Year)` vs `(Author, Year)` depending on journal)
 - Reference list formatting compliance (Elsevier vs Springer conventions)
 - **AI-style markers** per `references/anti-ai-style.md` (em-dashes in body prose, hedge openers like "Importantly," and "Of note,", filler intensifiers, "utilize"/"leverage", and other patterns listed in that file)
-- **Provenance-leak tells** per `references/anti-ai-style.md`: code-file paths or script names in body prose (rewrite to describe the method; move any code location to the Code Availability statement) and raw cross-reference labels like `[eq:...]`, `\ref{...}`, `{#eq-...}` (replace with the rendered "Eq. (N)" / "Fig. N" / "Table N", or flag if the number is unconfirmable)
 
 The agent **may not**:
 - Change the meaning of any sentence
@@ -38,16 +37,40 @@ If the agent encounters a factual error, unsupported claim, or missing content d
 
 ## Proofreading pass — procedure
 
-Proofread mode produces an actual edited `.docx`, unlike Review and Revise. Use the public docx skill for the edit.
+Proofread mode produces an actual edited `.docx`, unlike Review and Revise. Edit the file **in place**, never by regenerating it.
 
-1. **Extract the manuscript as structured text** using pandoc via the docx skill.
+- **Claude Code:** use `python-docx` from the skill venv.
+- **Claude Desktop / claude.ai:** use the `docx` skill's editing methods at `/mnt/skills/public/docx/SKILL.md`, which handles unpack → edit XML → repack.
+
+Either way the rule is the same: change run text, preserve everything else.
+
+1. **Extract the manuscript as structured text** with the bundled extractor, run from the skill directory:
+   ```bash
+   # Claude Code:
+   "$SKILL_DIR/.venv/bin/python" \
+     "$SKILL_DIR/scripts/extract_docx.py" <manuscript.docx> --sections
+   # Claude Desktop / claude.ai:
+   python3 scripts/extract_docx.py <manuscript.docx> --sections
+   ```
 2. **Run the edit pass section by section** — Abstract, Introduction, Methods, Results, Discussion, Conclusions, References. Within each section:
    - Read every sentence.
    - Apply allowed edits.
    - Record each edit in a running log: `[Section / paragraph] BEFORE → AFTER | reason`.
 3. **For reference list verification (scope c only):** sample 5–10 references and verify format compliance with the journal reference file. Do not attempt to verify every entry — flag systematic issues rather than hunting every typo.
-4. **Write the edited content back to .docx** using the docx skill's editing methods (unpack → edit XML → repack, as the docx skill describes). Preserve all formatting, figures, tables, and equations.
-5. **Validate the output** with `python scripts/office/validate.py <filename>_proofread.docx` (as described in the docx skill).
+4. **Write the edited content back to .docx** by editing runs in place with `python-docx`, not by regenerating the document. Open the original, walk `document.paragraphs` (and `table.rows[].cells[].paragraphs`), and replace run text only. This preserves formatting, figures, tables, equations, and section properties, all of which a pandoc round-trip would destroy.
+
+   When a replacement spans several runs, write the new text into the first run of the sentence and blank the remaining runs of that sentence rather than deleting run objects, which keeps character formatting anchored.
+
+5. **Validate the output:**
+   ```bash
+   # Claude Code:
+   "$SKILL_DIR/.venv/bin/python" \
+     "$SKILL_DIR/scripts/validate_docx.py" <filename>_proofread.docx --font "Times New Roman"
+   # Claude Desktop / claude.ai: additionally run the docx skill's OOXML validator
+   python3 scripts/validate_docx.py <filename>_proofread.docx
+   python scripts/office/validate.py <filename>_proofread.docx
+   ```
+   Exit code 1 means at least one check failed. Resolve or report every FAIL before handing the file back. Also re-run `scripts/extract_docx.py` on the proofread file and confirm the figure, table, equation, and reference counts match the original: a proofread pass must not change any of them.
 
 ## Output
 
