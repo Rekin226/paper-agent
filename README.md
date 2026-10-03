@@ -117,55 +117,6 @@ Is ~/papers/my-paper.docx ready to submit to Engineering Geology?
 
 The skill will run a short startup interview to pick the mode, the target journal, and the data sources, then proceed section-by-section with a pause-and-confirm protocol.
 
-## 🧩 Architecture
-
-```
-paper-agent/
-├── SKILL.md                         # entry point + Draft-mode workflow
-├── .claude-plugin/                  # plugin + marketplace manifests (one-command install)
-│   ├── plugin.json
-│   └── marketplace.json
-├── .mcp.json                        # defines the semantic-scholar + openalex MCP servers
-├── .claude/settings.json            # enables the semantic-scholar MCP
-├── package_for_claude_ai.sh         # builds a claude.ai-compatible upload zip
-├── scripts/                         # bundled .docx tooling
-│   ├── extract_docx.py              # section extraction
-│   ├── validate_docx.py             # style + submission-presentation validator
-│   ├── apply_submission_format.py   # stamp line/page numbers, double spacing
-│   ├── make_highlights_docx.py      # separate highlights file, cap-checked
-│   └── verify_numbers.py            # numeric provenance gate
-├── .local/                          # gitignored: your private presets
-├── examples/                        # bundled synthetic demos (Draft + Audit) — try it in 60s
-└── references/
-    ├── startup-interview.md         # mode/journal/data interview
-    ├── journal-hydrogeology.md      # HJ style, citation format, checklist
-    ├── journal-jhrs.md              # JHRS style, structured abstract, KMZ
-    ├── journal-jhydrol.md           # Journal of Hydrology (Highlights, Elsevier)
-    ├── journal-wrr.md               # Water Resources Research (AGU Key Points)
-    ├── journal-hess.md              # HESS (Copernicus refs, Data/Code availability)
-    ├── journal-groundwater.md       # Groundwater (NGWA, concise, practitioner register)
-    ├── journal-engineering-geology.md  # Engineering Geology (Elsevier)
-    ├── journal-tim.md               # IEEE TIM style (numbered cites, IEEEtran)
-    ├── journal-jmbe.md              # JMBE (Springer)
-    ├── journal-physiological-measurement.md  # Physiological Measurement (IOP / IPEM)
-    ├── journal-generic.md           # field-agnostic baseline for any other journal
-    ├── mode-review.md               # Review-mode report format
-    ├── mode-revise.md               # Revise-mode BEFORE/AFTER protocol
-    ├── mode-proofread.md            # Proofread-mode allowed scope
-    ├── mode-audit.md                # Audit-mode 8-check protocol
-    ├── mode-format.md               # Format-mode submission-presentation pass
-    ├── submission-format.md         # presentation layer author guides omit
-    ├── introduction-structure.md    # five-move funnel for Introductions
-    ├── reproducibility.md           # Methods replicability, back matter
-    ├── anti-fabrication.md          # ask, flag, search, or decline — never invent
-    ├── anti-ai-style.md             # patterns reviewers recognise as AI
-    ├── anti-summary-rules.md        # write prose, not outlines
-    ├── preset-example.md            # project-preset template
-    └── preset-demo.md               # auto-detect preset for the bundled Draft demo
-```
-
-Reference files are loaded lazily — only the mode and journal files the current session needs are read. This keeps Claude's context budget small.
-
 ## 🔌 Dependencies
 
 - **Claude Code** — the CLI is the runtime. See [Claude Code docs](https://docs.claude.com/en/docs/claude-code) for setup.
