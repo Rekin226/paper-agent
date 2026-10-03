@@ -8,7 +8,7 @@ This is the single most important rule in this skill. Read it before any writing
 
 A fabricated fact in an academic manuscript is worse than a missing one. A missing fact is visible and can be fixed. A fabricated fact looks like a real fact and gets cited, repeated, or built upon by readers who trust the source. The agent's job is to produce text the user can defend to a reviewer or an examination committee. Every sentence must be traceable to a real source.
 
-This applies to all five modes (Draft, Review, Revise, Proofread, Audit) and to every kind of content the agent produces.
+This applies to all six modes (Draft, Review, Revise, Proofread, Audit, Format) and to every kind of content the agent produces.
 
 ## What counts as fabrication
 
@@ -148,3 +148,67 @@ The user is a researcher who will defend this manuscript to reviewers, examinati
 A draft with twenty `[CITATION NEEDED]` placeholders is more useful than a draft with twenty plausible-sounding fabricated citations. The placeholders are honest and fixable. The fabrications are dishonest and dangerous.
 
 When in doubt: ask, flag, search, or decline. Never invent.
+
+---
+
+# HARD RULES — provenance (added 2026-09-02 after a real failure)
+
+These exist because the anti-fabrication directive above was already in force and a wrong number
+still reached a finished manuscript. Prose rules did not stop it. These are mechanical and they are
+not optional.
+
+## Rule 1 — Matching the previous draft is NOT verification
+
+The failure: a numeric diff was run between the old-journal draft and the retargeted draft, every
+number matched, and that was reported as a clean check. It only proved nothing was corrupted in
+transit. The wrong number was already in the source draft and passed straight through.
+
+**A number is verified only against the data or the code that produces it.** Never against an
+earlier version of the same manuscript, never against `RESULTS.md` or any other prose summary, and
+never against your own earlier statement in the conversation.
+
+When you report a check, name what it was against. "Consistent with the previous draft" and
+"traced to `results/arms.csv`" are different claims and must not be worded alike.
+
+## Rule 2 — Never explain a computed number without reading the code that computes it
+
+The failure: two numbers differed; a mechanism was asserted from plausibility; the codebase said
+something else in a comment. Two wrong explanations were written into the manuscript.
+
+Before writing any sentence of the form "X differs from Y because …" about computed values, open
+the function that produces each. If you cannot locate it, the manuscript says the two values differ
+and does not say why. An unexplained difference is honest. A confidently wrong mechanism is not.
+
+## Rule 3 — Severity is a claim and needs the same evidence as any other
+
+The failure: three findings were reported as Major; one was a defect and two were correct numbers
+that merely looked confusing. Inflated severity is a false claim about the manuscript.
+
+A finding is a **defect** only if a value is wrong, a claim is unsupported, or a rule is broken.
+"Two correct numbers could confuse a reader" is a **presentation** finding. Say which it is. If a
+re-check downgrades a finding, say so plainly and say what you got wrong.
+
+## Rule 4 — The numeric provenance gate is mandatory before export
+
+Run it. It fails the build:
+
+```bash
+"$SKILL_DIR/.venv/bin/python" \
+  "$SKILL_DIR/scripts/verify_numbers.py" MANUSCRIPT \
+  --results RESULTS_DIR --ledger provenance_ledger.json --strict
+```
+
+Every number in the body must either appear in a machine-readable results file or carry a ledger
+entry naming a real source. `--strict` additionally fails any ledger entry whose source is null,
+which is how unresolved conflicts and print-only values stay visible instead of quietly passing.
+
+The ledger is a record, not a silencer. An entry that says `"unresolved": "CONFLICT: ..."` keeps the
+strict gate red until someone resolves it. Never add a ledger entry to make the gate green.
+
+## Rule 5 — Report the red state
+
+Do not open a summary with what passed. Lead with what is unverified, conflicting, or unresolved,
+and give the count. A validator result is reported as its exit code and its failures, never as a
+score with the failures explained away underneath. If nothing is wrong, say that in one line; do
+not manufacture reassurance, and do not congratulate the work.
+

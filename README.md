@@ -5,12 +5,12 @@
 **Journal-quality hydrology manuscripts, drafted and reviewed by Claude.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.6.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.7.0-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-orange.svg)](https://docs.claude.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-*Drafts, reviews, revises, proofreads, and audits scientific manuscripts.*  
-*Calibrated for hydrology (* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** • **Journal of Hydrology** • **Water Resources Research** • **HESS** • **Groundwater** *), with profiles for* **Engineering Geology** *,* **IEEE Transactions on Instrumentation and Measurement** *and* **JMBE** *, plus a generic profile for any other quantitative-science journal — extensible via a single reference file.*
+*Drafts, reviews, revises, proofreads, audits, and submission-formats scientific manuscripts.*  
+*Calibrated for hydrology (* **Hydrogeology Journal** • **Journal of Hydrology: Regional Studies** • **Journal of Hydrology** • **Water Resources Research** • **HESS** • **Groundwater** *), with profiles for* **Engineering Geology** *,* **IEEE Transactions on Instrumentation and Measurement** *,* **JMBE** *and* **Physiological Measurement** *, plus a generic profile for any other quantitative-science journal — extensible via a single reference file.*
 
 </div>
 
@@ -55,6 +55,7 @@ The full demo (with answer key) and a **Draft-mode** demo that turns synthetic C
 | 🔄 | **Revise** | Existing `.docx` + optional reviewer comments | Section-by-section BEFORE / AFTER / RATIONALE suggestions in chat (you apply them), plus a response-to-reviewers letter when reviewer comments are provided |
 | 🔍 | **Proofread** | Existing `.docx` manuscript | Revised `.docx` with language-level fixes only — no scientific changes, no restructuring, no new citations |
 | 🧭 | **Audit** | Existing `.docx` manuscript | Consistency and coherence report in chat with severity-tagged findings (Critical / Major / Minor). Catches gap-vs-conclusions mismatches, sample-size inconsistencies, broken cross-references, terminology drift, argument honesty conflicts |
+| 📐 | **Format** | Existing `.docx` + target journal | Submission-ready `.docx` (continuous line numbers, page numbers, double spacing, single column) plus the separate files the portal needs (e.g. highlights), and a two-layer compliance report. Changes presentation only, never a word of text |
 
 The user selects one mode at session start. Each mode has its own reference file under `references/` with the exact protocol, allowed/forbidden operations, and output format.
 
@@ -86,6 +87,8 @@ ln -s ~/code/paper-agent ~/.claude/skills/paper-agent
 
 With Option B or C, restart your Claude Code session (or open a new one) so it picks up the skill.
 
+**Option D — Upload to claude.ai or Claude Desktop:** run `./package_for_claude_ai.sh` from a clone. It writes `paper-agent.zip` (to `~/Downloads` by default) with the frontmatter adjusted for claude.ai's skill validator. Upload that zip through the Skills section of your claude.ai settings. Requires Python with PyYAML.
+
 ## 🚀 Quickstart
 
 In any Claude Code session, invoke the skill explicitly:
@@ -108,6 +111,10 @@ Please review my manuscript at ~/papers/my-paper.docx and tell me what a JHRS re
 Proofread ~/papers/my-paper.docx for language only — no scientific changes.
 ```
 
+```
+Is ~/papers/my-paper.docx ready to submit to Engineering Geology?
+```
+
 The skill will run a short startup interview to pick the mode, the target journal, and the data sources, then proceed section-by-section with a pause-and-confirm protocol.
 
 ## 🧩 Architecture
@@ -120,9 +127,13 @@ paper-agent/
 │   └── marketplace.json
 ├── .mcp.json                        # defines the semantic-scholar + openalex MCP servers
 ├── .claude/settings.json            # enables the semantic-scholar MCP
-├── scripts/                         # bundled .docx extract + format validator
-│   ├── extract_docx.py
-│   └── validate_docx.py
+├── package_for_claude_ai.sh         # builds a claude.ai-compatible upload zip
+├── scripts/                         # bundled .docx tooling
+│   ├── extract_docx.py              # section extraction
+│   ├── validate_docx.py             # style + submission-presentation validator
+│   ├── apply_submission_format.py   # stamp line/page numbers, double spacing
+│   ├── make_highlights_docx.py      # separate highlights file, cap-checked
+│   └── verify_numbers.py            # numeric provenance gate
 ├── .local/                          # gitignored: your private presets
 ├── examples/                        # bundled synthetic demos (Draft + Audit) — try it in 60s
 └── references/
@@ -136,11 +147,14 @@ paper-agent/
     ├── journal-engineering-geology.md  # Engineering Geology (Elsevier)
     ├── journal-tim.md               # IEEE TIM style (numbered cites, IEEEtran)
     ├── journal-jmbe.md              # JMBE (Springer)
+    ├── journal-physiological-measurement.md  # Physiological Measurement (IOP / IPEM)
     ├── journal-generic.md           # field-agnostic baseline for any other journal
     ├── mode-review.md               # Review-mode report format
     ├── mode-revise.md               # Revise-mode BEFORE/AFTER protocol
     ├── mode-proofread.md            # Proofread-mode allowed scope
     ├── mode-audit.md                # Audit-mode 8-check protocol
+    ├── mode-format.md               # Format-mode submission-presentation pass
+    ├── submission-format.md         # presentation layer author guides omit
     ├── introduction-structure.md    # five-move funnel for Introductions
     ├── reproducibility.md           # Methods replicability, back matter
     ├── anti-fabrication.md          # ask, flag, search, or decline — never invent
@@ -173,7 +187,7 @@ If you work on the same project repeatedly, define a project preset to skip the 
 
 ### Extending to other journals
 
-The skill ships with named profiles for **Hydrogeology Journal**, **Journal of Hydrology: Regional Studies**, **Journal of Hydrology**, **Water Resources Research**, **Hydrology and Earth System Sciences**, **Groundwater**, **Engineering Geology**, **IEEE Transactions on Instrumentation and Measurement**, and **Journal of Medical and Biological Engineering**, plus a field-agnostic **generic** profile for everything else. Most of the skill's value is journal-agnostic anyway: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any quantitative-science manuscript.
+The skill ships with named profiles for **Hydrogeology Journal**, **Journal of Hydrology: Regional Studies**, **Journal of Hydrology**, **Water Resources Research**, **Hydrology and Earth System Sciences**, **Groundwater**, **Engineering Geology**, **IEEE Transactions on Instrumentation and Measurement**, **Journal of Medical and Biological Engineering**, and **Physiological Measurement**, plus a field-agnostic **generic** profile for everything else. Most of the skill's value is journal-agnostic anyway: the anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, Audit-mode consistency checks, and reproducibility/back-matter standards apply to any quantitative-science manuscript.
 
 **For a one-off submission to an unlisted journal:** select `generic` at session start and paste the journal's author guidelines — the generic profile uses them to fill in the specifics (citation style, word limits, abstract format) and applies sensible defaults for the rest.
 
@@ -187,7 +201,7 @@ PRs adding journal profiles — *Water Resources Management*, *Advances in Water
 
 ### Extending to other quantitative-science fields
 
-The skill's reference framework (Audit mode's 8 checks, anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, reproducibility/back-matter standards) is **field-agnostic** — it applies to any quantitative-science manuscript with a Methods / Results / Discussion structure. Only the named journal style files are venue-specific, and six of the nine (`journal-hydrogeology.md`, `journal-jhrs.md`, `journal-jhydrol.md`, `journal-wrr.md`, `journal-hess.md`, `journal-groundwater.md`) are hydrology titles; `journal-engineering-geology.md`, `journal-tim.md`, and `journal-jmbe.md` already demonstrate the extension to other fields.
+The skill's reference framework (Audit mode's 8 checks, anti-fabrication directive, anti-AI-style rules, five-move Introduction funnel, reproducibility/back-matter standards) is **field-agnostic** — it applies to any quantitative-science manuscript with a Methods / Results / Discussion structure. Only the named journal style files are venue-specific, and six of the ten (`journal-hydrogeology.md`, `journal-jhrs.md`, `journal-jhydrol.md`, `journal-wrr.md`, `journal-hess.md`, `journal-groundwater.md`) are hydrology titles; `journal-engineering-geology.md`, `journal-tim.md`, `journal-jmbe.md`, and `journal-physiological-measurement.md` already demonstrate the extension to other fields.
 
 To apply the skill to a different field (atmospheric sciences, hydrochemistry, soil science, ecology, geophysics, …):
 

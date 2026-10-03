@@ -77,6 +77,26 @@ Determine which the journal uses (from pasted guidelines, the user, or an existi
 
 ## Pre-submission checklist (generic — augment with the journal's own list)
 
+**Submission presentation — check these first.** Many journals' guides for
+authors do not state them, yet they are the most common cause of a pre-review desk
+return. Read `references/submission-format.md`; apply with
+`scripts/apply_submission_format.py`; verify with `scripts/validate_docx.py` on
+the exact file to be uploaded.
+
+- [ ] Continuous line numbers present, restarting `continuous`
+- [ ] Page numbers present as a footer field, not typed digits
+- [ ] Body text double-spaced (table cells may stay single)
+- [ ] Single-column layout; source is .doc/.docx/.tex, never a PDF
+- [ ] No strikethrough, no underline, no live tracked changes
+- [ ] Separate files (highlights, graphical abstract, supplementary data) built AND
+      confirmed with the user as uploaded in the submission system — upload state
+      cannot be read from the filesystem
+- [ ] `scripts/validate_docx.py` output shown to the user verbatim, not summarised
+
+Apply this baseline unless the pasted author guidelines state a different rule.
+Silence in the guidelines is not evidence that nothing is required. Do not tell
+the user the journal states these rules unless the guidelines actually do.
+
 Before export, verify:
 
 - [ ] Structure follows IMRaD (or the journal's required order)

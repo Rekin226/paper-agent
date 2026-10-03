@@ -1,12 +1,22 @@
 ---
 name: paper-agent
-description: Full academic manuscript skill for quantitative-science papers, with journal profiles for Hydrogeology Journal, Journal of Hydrology Regional Studies, Journal of Hydrology, Water Resources Research, HESS, Groundwater, Engineering Geology, IEEE TIM, and JMBE, plus a field-agnostic generic profile for any other journal. Five modes, namely Draft, Review, Revise, Proofread, and Audit. Use whenever the user wants to draft, write, review, revise, polish, proofread, audit, or respond to reviewer comments on a journal manuscript. Reads workspace data and existing .docx manuscripts, resolves citations via Semantic Scholar with OpenAlex DOI verification where available, and outputs publication-ready prose or structured feedback. Trigger on "write the paper", "draft the manuscript", "review my manuscript", "respond to reviewers", "audit my paper", "/paper-agent", or any manuscript writing, revision, review, or audit request. Also triggers when the user uploads a .docx asking for feedback or edits.
+description: >-
+  Full academic manuscript skill for quantitative-science papers, with journal profiles for
+  Hydrogeology Journal, Journal of Hydrology Regional Studies, Journal of Hydrology, Water Resources
+  Research, HESS, Groundwater, Engineering Geology, IEEE TIM, JMBE, and Physiological Measurement,
+  plus a field-agnostic generic profile for any other journal. Six modes: Draft, Review, Revise, Proofread,
+  Audit, and Format. Use whenever the user wants to draft, write, review, revise, polish, proofread,
+  or audit a journal manuscript, or respond to reviewer comments, including when they upload a .docx
+  for feedback or edits. Also use for submission formatting: "is this ready to submit", formatting for
+  a named journal, line numbers, the highlights file, or a desk-return from an editorial office. Reads
+  workspace data and existing .docx manuscripts, resolves citations via Semantic Scholar with OpenAlex
+  DOI verification where available, and outputs publication-ready prose or structured feedback.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Skill, mcp__semantic-scholar__search_papers, mcp__semantic-scholar__get_paper, mcp__semantic-scholar__search_papers_match, mcp__openalex__search_works, mcp__openalex__batch_resolve_references, mcp__openalex__check_venue_quality, mcp__openalex__get_work
 ---
 
-# Paper Agent — Academic Manuscript Generator and Reviewer
+# Paper Agent: Academic Manuscript Generator and Reviewer
 
-Generate, review, revise, or proofread hydrology and water-resources manuscripts at journal-submission quality. Read project data or existing .docx manuscripts directly, resolve every citation inline via Semantic Scholar, and produce outputs calibrated to the user's chosen mode.
+Generate, review, revise, proofread, audit, or format hydrology and water-resources manuscripts at journal-submission quality. Read project data or existing .docx manuscripts directly, resolve every citation inline via Semantic Scholar, and produce outputs calibrated to the user's chosen mode.
 
 Never produce outlines, summaries, or bullet-point drafts in Draft mode. Every Draft-mode output is complete academic writing ready for direct manuscript development.
 
@@ -14,21 +24,22 @@ Never produce outlines, summaries, or bullet-point drafts in Draft mode. Every D
 
 ## MODES
 
-This skill supports five distinct modes. The user selects one at startup (Block 0 of the interview). Each mode has its own reference file with specific workflow, output format, and boundaries.
+This skill supports six distinct modes. The user selects one at startup (Block 0 of the interview). Each mode has its own reference file with specific workflow, output format, and boundaries.
 
 | Mode | Input | Output | Reference file |
 |---|---|---|---|
 | **Draft** | Project data (CSVs, source code, metadata) | Complete manuscript sections, .docx export | Body of this SKILL.md |
 | **Review** | Existing .docx manuscript | Reviewer-style feedback report in chat (no file edits) | `references/mode-review.md` |
-| **Revise** | Existing .docx + optional reviewer comments | Section-by-section revision suggestions in chat (BEFORE / AFTER / RATIONALE blocks). Never edits the .docx file directly — user applies changes themselves. | `references/mode-revise.md` |
+| **Revise** | Existing .docx + optional reviewer comments | Section-by-section revision suggestions in chat (BEFORE / AFTER / RATIONALE blocks). Never edits the .docx file directly; the user applies changes themselves. | `references/mode-revise.md` |
 | **Proofread** | Existing .docx manuscript | Revised .docx with language-level fixes only. No scientific changes, no restructuring, no new citations. | `references/mode-proofread.md` |
-| **Audit** | Existing .docx manuscript | Consistency and coherence report in chat with severity-tagged findings (Critical / Major / Minor). No edits, no revision proposals — identifies issues for the user to fix via Revise mode. | `references/mode-audit.md` |
+| **Audit** | Existing .docx manuscript | Consistency and coherence report in chat with severity-tagged findings (Critical / Major / Minor). No edits, no revision proposals: it identifies issues for the user to fix via Revise mode. | `references/mode-audit.md` |
+| **Format** | Existing .docx + journal target | Submission-ready .docx (line numbers, page numbers, spacing, columns) plus the separate files the submission system requires, and a two-layer compliance report. No text changes. | `references/mode-format.md` |
 
-**Mode determines what is allowed.** Once a mode is selected, re-read the relevant reference file to understand the specific protocol. Do not mix mode behaviours — e.g. Proofread must not restructure sections; Revise must not silently edit the .docx file; Review must not rewrite paragraphs.
+**Mode determines what is allowed.** Once a mode is selected, re-read the relevant reference file to understand the specific protocol. Do not mix mode behaviours (e.g. Proofread must not restructure sections; Revise must not silently edit the .docx file; Review must not rewrite paragraphs; Format must not change a single word of text).
 
 ---
 
-## ENVIRONMENT DETECTION — run once, before anything else
+## ENVIRONMENT DETECTION: run once, before anything else
 
 This skill runs in two environments with different toolchains. Detect which one you are in at the start of the session and record the answer; every `.docx` and citation step below branches on it.
 
@@ -77,21 +88,31 @@ Block 1 of the startup interview selects one. Load that file and keep it loaded 
 | Engineering Geology (EG) | Elsevier | author-year | `references/journal-engineering-geology.md` |
 | IEEE Trans. Instrumentation and Measurement (TIM) | IEEE | **numeric bracketed** | `references/journal-tim.md` |
 | J. Medical and Biological Engineering (JMBE) | Springer | author-year | `references/journal-jmbe.md` |
-| *Any other quantitative-science journal* | — | per author guidelines | `references/journal-generic.md` |
+| Physiological Measurement (PM) | IOP / IPEM | author-year (IOP Harvard) | `references/journal-physiological-measurement.md` |
+| *Any other quantitative-science journal* | | per author guidelines | `references/journal-generic.md` |
 
 For any journal not listed, load `references/journal-generic.md` and ask the user to paste the author guidelines; those guidelines override the generic baseline. Flag every point where you are extrapolating rather than following a stated rule. Never invent a journal rule.
 
 ---
 
-## ANTI-FABRICATION DIRECTIVE — read `references/anti-fabrication.md` before any work.
+## ANTI-FABRICATION DIRECTIVE: read `references/anti-fabrication.md` before any work.
 
 This is the most important rule in the skill. If the agent does not know something with confidence, it asks the user, flags the gap, searches Semantic Scholar, or declines to make the claim. It never fills in a plausible-sounding answer. Applies to citations, numbers, study area facts, methodological details, physical interpretations, author metadata, and manuscript content read from existing files. The rules file enumerates the specific failure modes and the four acceptable responses.
 
-## ANTI-SUMMARY DIRECTIVE — read `references/anti-summary-rules.md` before writing any section.
+## ANTI-SUMMARY DIRECTIVE: read `references/anti-summary-rules.md` before writing any section.
 
 This is one of the two most common failure modes. The rules file is short and mandatory.
 
-## ANTI-AI-STYLE DIRECTIVE — read `references/anti-ai-style.md` before writing any prose.
+## SUBMISSION-FORMAT DIRECTIVE: read `references/submission-format.md` before claiming any manuscript is ready to submit, and before every .docx export.
+
+**Silence in a journal's guide for authors is not evidence that nothing is required.** Guides describe the article; editorial offices separately enforce a presentation layer (continuous line numbers, page numbers, double spacing, single column) that is frequently stated nowhere on the guide page, and return manuscripts unreviewed when it is missing. Verified 2026-09-11: a manuscript was desk-returned by Engineering Geology for missing line and page numbers, neither of which appears anywhere in that journal's guide.
+
+Two consequences, both binding in every mode:
+
+1. **Never say "the format meets the journal requirements."** That sentence merges article style with submission presentation. Report them as two separate layers and name which one you actually checked, per the template in the rules file.
+2. **A style-checklist pass is not a readiness verdict.** Readiness requires `scripts/validate_docx.py` run on the exact file that will be uploaded, plus an explicit statement that upload state of the separate files (highlights, graphical abstract, supplementary data) cannot be verified from here and must be confirmed by the user.
+
+## ANTI-AI-STYLE DIRECTIVE: read `references/anti-ai-style.md` before writing any prose.
 
 Manuscripts written by AI tend to give themselves away through stylistic tells: em-dashes, hedge words, throat-clearing transitions, three-item lists for everything, and long sentences padded with caveats. Reviewers notice. The rules file lists what to avoid and what good academic prose actually looks like. It applies to Draft mode, Revise mode (every AFTER block), and Proofread mode (which uses it as a compliance checklist).
 
@@ -99,11 +120,11 @@ Manuscripts written by AI tend to give themselves away through stylistic tells: 
 
 ## STARTUP SEQUENCE
 
-Run once per session, before any writing or review. Follow `references/startup-interview.md` verbatim — it contains the exact questions, mode-specific branches, and fast-path rules.
+Run once per session, before any writing or review. Follow `references/startup-interview.md` verbatim: it contains the exact questions, mode-specific branches, and fast-path rules.
 
-**Block 0 — Mode selection (always first).** Ask which mode the user wants: Draft, Review, Revise, Proofread, or Audit. Load the corresponding reference file immediately.
+**Block 0: Mode selection (always first).** Ask which mode the user wants: Draft, Review, Revise, Proofread, Audit, or Format. Load the corresponding reference file immediately.
 
-**Block 1 — Journal target** (all modes). Load the matching profile from the journal table below. The journal style matters for Review (is the manuscript HJ-compliant?), Revise (do the edits match journal style?), and Proofread (what terminology rules to enforce?), not just Draft.
+**Block 1: Journal target** (all modes). Load the matching profile from the journal table above, **and load `references/submission-format.md` alongside it**. The journal style matters for Review (is the manuscript HJ-compliant?), Revise (do the edits match journal style?), and Proofread (what terminology rules to enforce?), not just Draft. The submission-format baseline matters for all of them, because no journal profile can be assumed to state it.
 
 **Remaining blocks branch by mode.** Read `references/startup-interview.md` for the full protocol.
 
@@ -119,7 +140,7 @@ When the mode is Review, Revise, or Proofread, the user provides a path to an ex
 
 1. **Extract the manuscript**, per the environment detected above.
 
-   **Claude Code (`LOCAL_VENV=yes`)** — run the bundled extractor. Absolute paths, so it works from any working directory:
+   **Claude Code (`LOCAL_VENV=yes`)**: run the bundled extractor. Absolute paths, so it works from any working directory:
    ```bash
    "$SKILL_DIR/.venv/bin/python" \
      "$SKILL_DIR/scripts/extract_docx.py" <manuscript.docx> --sections
@@ -129,7 +150,7 @@ When the mode is Review, Revise, or Proofread, the user provides a path to an ex
    cd "$SKILL_DIR" && python3 -m venv .venv && .venv/bin/pip install python-docx lxml
    ```
 
-   **Claude Desktop / claude.ai (`DOCX_SKILL=yes`)** — the bundled `scripts/extract_docx.py` still runs if `python-docx` is importable, which it normally is in that container:
+   **Claude Desktop / claude.ai (`DOCX_SKILL=yes`)**: the bundled `scripts/extract_docx.py` still runs if `python-docx` is importable, which it normally is in that container:
    ```bash
    python3 scripts/extract_docx.py <manuscript.docx> --sections
    ```
@@ -164,7 +185,7 @@ When the mode is Review, Revise, or Proofread, the user provides a path to an ex
 
 ---
 
-## DRAFT MODE — workflow below
+## DRAFT MODE: workflow below
 
 The sections from here down (Citation workflow, Pause protocol, Section content guidance, QC, Export) apply to **Draft mode only**. For Review, Revise, or Proofread, read the corresponding mode reference file instead:
 
@@ -172,8 +193,9 @@ The sections from here down (Citation workflow, Pause protocol, Section content 
 - Revise → `references/mode-revise.md`
 - Proofread → `references/mode-proofread.md`
 - Audit → `references/mode-audit.md`
+- Format → `references/mode-format.md`
 
-The **Figure necessity assessment** (further down) applies to all modes — Review checks whether existing figures earn their place, Revise can recommend cutting them, Draft gates new ones.
+The **Figure necessity assessment** (further down) applies to all modes: Review checks whether existing figures earn their place, Revise can recommend cutting them, Draft gates new ones.
 
 ## CITATION WORKFLOW
 
@@ -191,7 +213,7 @@ Execute before drafting each section except the Abstract (most journals, includi
 
 4. **Resolution: look the candidates up in OpenAlex.** Call `mcp__openalex__search_works` with the candidate title (set `exact_phrase: true` for a distinctive title). This returns what Semantic Scholar cannot: `doi`, `cited_by_count`, `fwci`, `source` with `source_issn_l`, and open-access status.
 
-   If OpenAlex cannot find the paper, the citation is **unresolved**. Insert `[CITATION NEEDED: <topic> — found in Semantic Scholar as "<title>" but not resolvable in OpenAlex, DOI unverified]` and tell the user. Do not write a reference entry from the Semantic Scholar result alone, and never reconstruct a DOI from a pattern.
+   If OpenAlex cannot find the paper, the citation is **unresolved**. Insert `[CITATION NEEDED: <topic>, found in Semantic Scholar as "<title>" but not resolvable in OpenAlex, DOI unverified]` and tell the user. Do not write a reference entry from the Semantic Scholar result alone, and never reconstruct a DOI from a pattern.
 
    **If `mcp__openalex__*` tools are not available at all** (Claude Desktop / claude.ai, unless you have added an OpenAlex connector), this step cannot run. Then:
    - Cite from the Semantic Scholar result: authors, title, year, and venue where present.
@@ -254,19 +276,19 @@ If the user explicitly asks to write a different section first (e.g. "draft the 
 
 ## SECTION CONTENT GUIDANCE
 
-The section structure, verb tenses, required sub-headings, abstract format, and reference list format all come from the **loaded journal reference file**. Re-read that file before writing each section if you're unsure about a detail — do not guess.
+The section structure, verb tenses, required sub-headings, abstract format, and reference list format all come from the **loaded journal reference file**. Re-read that file before writing each section if you're unsure about a detail, do not guess.
 
 Generic guidance that applies across the supported journals (the loaded profile overrides anything below where they conflict):
 
-- **Abstract** — no citations. State the real cached numbers (sample sizes, key metrics). Follow the journal's required structure (HJ = single paragraph; JHRS = three labelled parts: Study Region, Study Focus, New Hydrological Insights for the Region). Write the Abstract LAST, after Discussion is drafted, not first.
-- **Introduction** — read `references/introduction-structure.md` before drafting. The Introduction must follow the five-move funnel (broad significance → narrowing literature review → specific gap → study objectives → roadmap). Every cited paper must support a specific claim, not pad the section.
-- **Materials and Methods** — past tense. Read `references/reproducibility.md` for the replicability standard. Every equation, parameter, and setting must come from the cached source files. Methods must include enough detail for independent replication: data sources with access details, software versions, parameter ranges, calibration period, optimizer settings, convergence criteria.
-- **Results** — present tense. Every quantitative claim must cite a table, figure, or cached value. Refuse to write "the model performs well", always give numbers. Report metrics with sample sizes and uncertainty (SD or CI) where available.
-- **Discussion** — present tense. Benchmark against resolved references (Semantic Scholar for discovery, OpenAlex for the DOI and metadata). Interpret fitted parameters physically. Do not restate results.
-- **Limitations** (usually §4.5 in HJ, end of Discussion in JHRS) — mandatory. Write each as: *limitation → assessed impact → proposed remedy*. Use only the limitations the user supplied in the startup interview (or from the loaded preset). Do not invent.
-- **Conclusions** — 3–5 paragraphs. No new results, no new citations.
-- **Back matter** (Data Availability, Code Availability, Author Contributions / CRediT, Conflict of Interest, Funding, Acknowledgements) — read `references/reproducibility.md`. The loaded journal profile is the authority on which are mandatory: JHRS and Journal of Hydrology require Data Availability and CRediT; HESS requires Data Availability and, where code was used, Code Availability as named sections; HJ requires Data Availability and recommends the rest. These are not optional; missing back matter triggers desk rejection at every supported journal.
-- **References** — alphabetical, deduplicated, formatted per journal. Target ≥15 resolved entries for a full paper.
+- **Abstract**: no citations. State the real cached numbers (sample sizes, key metrics). Follow the journal's required structure (HJ = single paragraph; JHRS = three labelled parts: Study Region, Study Focus, New Hydrological Insights for the Region). Write the Abstract LAST, after Discussion is drafted, not first.
+- **Introduction**: read `references/introduction-structure.md` before drafting. The Introduction must follow the five-move funnel (broad significance → narrowing literature review → specific gap → study objectives → roadmap). Every cited paper must support a specific claim, not pad the section.
+- **Materials and Methods**: past tense. Read `references/reproducibility.md` for the replicability standard. Every equation, parameter, and setting must come from the cached source files. Methods must include enough detail for independent replication: data sources with access details, software versions, parameter ranges, calibration period, optimizer settings, convergence criteria.
+- **Results**: present tense. Every quantitative claim must cite a table, figure, or cached value. Refuse to write "the model performs well", always give numbers. Report metrics with sample sizes and uncertainty (SD or CI) where available.
+- **Discussion**: present tense. Benchmark against resolved references (Semantic Scholar for discovery, OpenAlex for the DOI and metadata). Interpret fitted parameters physically. Do not restate results.
+- **Limitations** (usually §4.5 in HJ, end of Discussion in JHRS): mandatory. Write each as: *limitation → assessed impact → proposed remedy*. Use only the limitations the user supplied in the startup interview (or from the loaded preset). Do not invent.
+- **Conclusions**: 3–5 paragraphs. No new results, no new citations.
+- **Back matter** (Data Availability, Code Availability, Author Contributions / CRediT, Conflict of Interest, Funding, Acknowledgements): read `references/reproducibility.md`. The loaded journal profile is the authority on which are mandatory: JHRS and Journal of Hydrology require Data Availability and CRediT; HESS requires Data Availability and, where code was used, Code Availability as named sections; HJ requires Data Availability and recommends the rest. These are not optional; missing back matter triggers desk rejection at every supported journal.
+- **References**: alphabetical, deduplicated, formatted per journal. Target ≥15 resolved entries for a full paper.
 
 ---
 
@@ -274,12 +296,24 @@ Generic guidance that applies across the supported journals (the loaded profile 
 
 Before generating the .docx, verify every item below. Fix or flag any failure.
 
+**Numeric provenance gate: RUN THIS, IT FAILS THE BUILD** (per `references/anti-fabrication.md`, Rules 1–5)
+```bash
+"$SKILL_DIR/.venv/bin/python" \
+  "$SKILL_DIR/scripts/verify_numbers.py" <manuscript> \
+  --results <results-dir> --ledger provenance_ledger.json --strict
+```
+- [ ] Exit code 0 in `--strict`, or every remaining red entry reported to the user by name
+- [ ] No number was verified by comparing it to an earlier draft (Rule 1: that is not verification)
+- [ ] No sentence explains why two computed values differ without the code path having been read (Rule 2)
+- [ ] Every finding labelled *defect* or *presentation*, not inflated to Major by default (Rule 3)
+- [ ] The report leads with what is unverified or conflicting, not with what passed (Rule 5)
+
 **Anti-fabrication** (per `references/anti-fabrication.md`)
 - [ ] Every numerical claim traces to a cached file, figure, or user-supplied fact (no invented values, sample sizes, units, or precision)
 - [ ] Every citation was found in a search AND resolved in OpenAlex (no fabricated references, DOIs, or author names)
 - [ ] Every causal or mechanistic claim has either a citation or an explicit hedge ("may", "one possible interpretation", "we hypothesize")
 - [ ] No "well-known", "established", or "previous studies have shown" without a real citation
-- [ ] No invented study-area facts (basin area, climate, geology) — all sourced or supplied
+- [ ] No invented study-area facts (basin area, climate, geology); all sourced or supplied
 - [ ] No invented software versions, parameter rationales, random seeds, or calibration/validation splits beyond what the source code shows
 - [ ] No invented author metadata (affiliations, ORCIDs, emails, CRediT roles, funding details)
 - [ ] All bracketed placeholders ([CITATION NEEDED], [VALUE NEEDED], [VERIFY], [FROM USER]) are listed for the user
@@ -288,14 +322,14 @@ Before generating the .docx, verify every item below. Fix or flag any failure.
 - [ ] Every equation matches the cached source file (no invented terms)
 - [ ] Every quantitative claim is traceable to a cached CSV row, figure, or user-supplied fact
 - [ ] Study period, coordinate system, and sample sizes are consistent throughout
-- [ ] Nothing in §4.5 / Limitations is invented — all items came from the user or preset
+- [ ] Nothing in §4.5 / Limitations is invented; all items came from the user or preset
 
 **Language**
 - [ ] Zero first-person pronouns (I, we, my, our) anywhere
 - [ ] All abbreviations defined on first use
 - [ ] Terminology follows the journal style file (e.g. 'groundwater' one word, 'water table' two words for HJ)
 - [ ] All displayed equations numbered sequentially; all symbols defined on first appearance
-- [ ] Zero forward section references outside the Introduction — no sentence in Methods, Results or Discussion sends the reader to a section they have not reached (per `references/anti-ai-style.md`)
+- [ ] Zero forward section references outside the Introduction: no sentence in Methods, Results or Discussion sends the reader to a section they have not reached (per `references/anti-ai-style.md`)
 
 **Citation integrity**
 - [ ] All in-text citations resolved, each DOI taken from an OpenAlex result in this session
@@ -306,11 +340,23 @@ Before generating the .docx, verify every item below. Fix or flag any failure.
 - [ ] In-text and reference-list styles match the loaded journal file
 
 **Figures & tables**
-- [ ] Every figure passed the four-question necessity assessment — no reflex figures, no redundant-with-table figures
+- [ ] Every figure passed the four-question necessity assessment: no reflex figures, no redundant-with-table figures
 - [ ] Total figure count ≤6 for a full paper
 - [ ] Sequential numbering with no gaps
 - [ ] Captions complete and informative (figure caption below, table caption above)
 - [ ] Any figure whose rationale was weak has been dropped or moved to supplementary
+
+**Submission format: THIS IS WHAT DESK-RETURNS MANUSCRIPTS** (per `references/submission-format.md`)
+- [ ] `scripts/validate_docx.py` run on the **exact file that will be uploaded**, output shown to the user verbatim
+- [ ] Continuous line numbers present, restart `continuous`, in every section
+- [ ] Page numbers present as a `PAGE` field in a footer, not typed digits
+- [ ] Body line spacing double (table cells exempt)
+- [ ] Single-column layout; source is .doc/.docx/.tex and never a PDF
+- [ ] No strikethrough, no underline, no tracked changes left on
+- [ ] Highlights, where required: separate editable .docx, "highlights" in the file name, bullet count and character cap verified by `scripts/make_highlights_docx.py`
+- [ ] Graphical abstract and supplementary data as separate files, never embedded
+- [ ] User asked which separate files are **uploaded in the submission system** and under which item type; this cannot be verified from the filesystem and must never be assumed
+- [ ] Readiness reported as two layers (article style, submission presentation), never as one "format is fine"
 
 **Journal-specific QC**
 - [ ] Re-read the "Pre-submission checklist" section of the loaded journal reference file and verify every item
@@ -320,7 +366,7 @@ Before generating the .docx, verify every item below. Fix or flag any failure.
 - [ ] Methods specify software versions, random seeds (if stochastic), and calibration vs. validation periods
 - [ ] Data Availability Statement present and specific (no bare "available upon request")
 - [ ] Code Availability Statement present (or explicit, justified absence)
-- [ ] CRediT author contributions drafted (mandatory for JHRS and Journal of Hydrology, recommended for HJ — check the loaded journal profile)
+- [ ] CRediT author contributions drafted (mandatory for JHRS and Journal of Hydrology, recommended for HJ; check the loaded journal profile)
 - [ ] Conflict of Interest declaration present
 - [ ] Funding statement with grant numbers
 - [ ] All cited repositories live and reachable; all DOIs functional
@@ -338,9 +384,9 @@ Before generating the .docx, verify every item below. Fix or flag any failure.
 
 When the user confirms export, branch on the detected environment.
 
-**Claude Code** — follow the `pandoc → python-docx post-process` pipeline in `references/manuscript-docx-style.md`. Write the manuscript as Markdown or LaTeX, convert with `pandoc`, then run the post-process pass that enforces the formatting spec.
+**Claude Code**: follow the `pandoc → python-docx post-process` pipeline in `references/manuscript-docx-style.md`. Write the manuscript as Markdown or LaTeX, convert with `pandoc`, then run the post-process pass that enforces the formatting spec.
 
-**Claude Desktop / claude.ai** — delegate to the `docx` skill at `/mnt/skills/public/docx/SKILL.md`. Read its SKILL.md before generating. It is the canonical .docx creation path in that environment and handles the OOXML details directly. The formatting spec in `references/manuscript-docx-style.md` still governs *what* the output must look like; only the mechanism differs.
+**Claude Desktop / claude.ai**: delegate to the `docx` skill at `/mnt/skills/public/docx/SKILL.md`. Read its SKILL.md before generating. It is the canonical .docx creation path in that environment and handles the OOXML details directly. The formatting spec in `references/manuscript-docx-style.md` still governs *what* the output must look like; only the mechanism differs.
 
 Export requirements regardless of journal:
 - A4 page, 1-inch margins, single-column layout
@@ -348,13 +394,19 @@ Export requirements regardless of journal:
 - Decimal numbered headings via Heading1/Heading2/Heading3 styles
 - Full manuscript text + resolved reference list + any `[CITATION NEEDED]` markers preserved for user review
 - Equations as plain text with right-aligned sequential numbering
+- **Apply submission presentation before validating.** Continuous line numbers, page numbers and double spacing are required for peer review and are absent from most author guides. Where the manuscript is built from source, put them in the build script; otherwise stamp the file:
+  ```bash
+  "$SKILL_DIR/.venv/bin/python" \
+    "$SKILL_DIR/scripts/apply_submission_format.py" <filename>.docx
+  ```
+  After any rebuild, diff the extracted text against the previous file and confirm the word count and text hash are unchanged. A presentation fix must never move a word.
 - Validate after generation. **Claude Code:**
   ```bash
   "$SKILL_DIR/.venv/bin/python" \
     "$SKILL_DIR/scripts/validate_docx.py" <filename>.docx --font "Times New Roman"
   ```
   **Claude Desktop / claude.ai:** run the same bundled checker with `python3 scripts/validate_docx.py <filename>.docx`, and additionally `python scripts/office/validate.py <filename>.docx` from the `docx` skill, which checks OOXML validity that the bundled checker does not.
-  It checks package integrity, font coercion across every run variant, heading styles, sequential figure/table/equation numbering, unresolved `[CITATION NEEDED]`-style placeholders, first-person pronouns, percentage-width tables, and embedded figure media. Exit code 1 means at least one check failed. Fix or report every FAIL before delivering.
+  It checks package integrity, font coercion across every run variant, heading styles, sequential figure/table/equation numbering, unresolved `[CITATION NEEDED]`-style placeholders, first-person pronouns, percentage-width tables, embedded figure media, and the four submission-presentation items (continuous line numbers, page-number field, body line spacing, single column). Exit code 1 means at least one check failed. Fix or report every FAIL before delivering, and report the validator's own output, not your reading of it.
 
 For the full Word-output formatting spec (Times New Roman coercion across all run variants, Springer/booktabs three-rule table style, autofit + 100% width tables, mean ± std merging, TIFF figure format, citeproc citations, OMML equation handling, and the reproducible `pandoc → python-docx post-process` pipeline), read `references/manuscript-docx-style.md` before generating. That file is the canonical baseline; the journal reference file overrides it where they conflict.
 
@@ -366,24 +418,24 @@ Save to the workspace root with a filename the user specifies. Confirm creation 
 
 ## FIGURE SPECIFICATIONS
 
-Figures are expensive — every figure costs reviewer attention, page budget, and production work. A paper with four strong figures is stronger than one with eight mediocre ones. This skill does **not** generate a default figure list. It proposes figures only after each candidate passes a necessity assessment.
+Figures are expensive: every figure costs reviewer attention, page budget, and production work. A paper with four strong figures is stronger than one with eight mediocre ones. This skill does **not** generate a default figure list. It proposes figures only after each candidate passes a necessity assessment.
 
 ### Necessity assessment (run for every candidate figure)
 
-Before proposing a figure, answer all four questions in writing (for yourself — do not show this to the user). If any answer is weak, **do not propose the figure**.
+Before proposing a figure, check it against all four questions. If any answer is weak, **do not propose the figure**.
 
 1. **What specific claim in the manuscript does this figure support?** Name the sentence or paragraph. "Shows the results" is not an answer. "Supports the claim in §3.2 that inland stations outperform coastal ones by ~15 percentage points in median R²" is an answer.
-2. **Can the same information be conveyed by a single sentence or a small table?** If yes, the figure is redundant — drop it. Distributions of 3–5 numbers belong in a table, not a histogram. A single comparison belongs in prose.
+2. **Can the same information be conveyed by a single sentence or a small table?** If yes, the figure is redundant: drop it. Distributions of 3–5 numbers belong in a table, not a histogram. A single comparison belongs in prose.
 3. **Does this figure show something the reader cannot get from the cached numbers alone?** Figures earn their place by revealing *shape*, *spatial pattern*, *temporal structure*, or *relationships across many units* that prose and tables cannot show compactly. If a figure only restates numbers already in a table, cut it.
 4. **Is the underlying data actually in the workspace?** If the data source is hypothetical or would require analysis you have not seen in the cached files, do not propose the figure. Flag the gap to the user instead.
 
 ### When to run the assessment
 
-Propose figures **once, at the end of Discussion drafting** — not after Results, and never after every section. The timing matters:
+Propose figures **once, at the end of Discussion drafting**, not after Results and never after every section. The timing matters:
 
-- The necessity assessment depends on knowing *what each section actually argues*. A figure like "base vs. filtered RMSE scatter" is necessary only if §4.4 argues that filtered-model benefit correlates with base-model error — and you cannot know that until §4.4 is written. Assessing figures after Results forces you to guess what the Discussion will claim, which leads to over-proposing "just in case".
+- The necessity assessment depends on knowing *what each section actually argues*. A figure like "base vs. filtered RMSE scatter" is necessary only if §4.4 argues that filtered-model benefit correlates with base-model error, and you cannot know that until §4.4 is written. Assessing figures after Results forces you to guess what the Discussion will claim, which leads to over-proposing "just in case".
 - Batching all figure proposals into one pass at the end prevents the drip-drip of "here's another figure idea" that accumulates unchecked. One pass forces you to compare candidates against each other and apply the 6-figure cap.
-- By the end of Discussion, you also know which tables exist. A figure that would duplicate Table 2 is obvious once Table 2 is written — not before.
+- By the end of Discussion, you also know which tables exist. A figure that would duplicate Table 2 is obvious once Table 2 is written, and not before.
 
 If the user explicitly asks for figure ideas earlier (e.g. "what figures should I be preparing while we draft?"), you can list *candidate* figures with the caveat that the necessity assessment runs after Discussion. Do not skip the assessment just because the user asked early.
 
@@ -402,7 +454,7 @@ For figures that pass all four checks, format each as:
 
 - **Maximum 6 figures for a full research paper.** If more than 6 pass the necessity assessment, keep only the 6 strongest and move the rest to supplementary material.
 - **Maximum 2 figures showing the same class of result** (e.g. no more than two performance-distribution figures). Consolidate or drop.
-- **No "study area overview" figure unless the manuscript genuinely depends on spatial context the reader cannot infer from a sentence.** A study-area map is a reflex, not a necessity — interrogate it like any other figure.
+- **No "study area overview" figure unless the manuscript genuinely depends on spatial context the reader cannot infer from a sentence.** A study-area map is a reflex, not a necessity: interrogate it like any other figure.
 
 ### When to propose zero figures
 
@@ -426,28 +478,31 @@ Do not invoke `paper-figures` without the user confirming the specification firs
 
 ## REFERENCE FILES IN THIS SKILL
 
-- `references/anti-fabrication.md` — when in doubt, ask or flag, never invent. The most important rule in the skill. Read before any work in any mode.
-- `references/anti-summary-rules.md` — write prose not outlines. Read before every Draft-mode writing session and before any Revise-mode proposed revision.
-- `references/anti-ai-style.md` — write like a human, not like an AI. Read before every Draft-mode and Revise-mode writing session, and consulted by Proofread mode for compliance checks.
-- `references/introduction-structure.md` — the five-move funnel for Introduction sections (broad significance → narrowing review → gap → objectives → roadmap). Read before drafting or revising any Introduction.
-- `references/reproducibility.md` — Methods replicability standard, Data Availability and Code Availability statements, CRediT taxonomy, Conflict of Interest, Funding. Read when drafting Methods or back matter, and when reviewing/revising.
-- `references/manuscript-docx-style.md` — canonical Word-output formatting spec: TNR coercion, Springer-style tables, mean ± std merging, TIFF figures, OMML equations, citeproc citations, and the reproducible `pandoc → python-docx post-process` pipeline. Read during Export to .docx.
-- `references/startup-interview.md` — mode selection, exact startup questions, fast-path rules.
-- `references/journal-hydrogeology.md` — HJ style, structure, citation format, pre-submission checklist.
-- `references/journal-jhrs.md` — JHRS style, structured abstract, highlights, Elsevier reference format, pre-submission checklist.
-- `references/journal-engineering-geology.md` — Engineering Geology (Elsevier) style: scope gate, structure, author-year citations, Elsevier back matter and declarations, pre-submission checklist.
-- `references/journal-jmbe.md` — Journal of Medical and Biological Engineering (Springer) style: scope, structure, Springer author-year citations, pre-submission checklist.
-- `references/journal-tim.md` — IEEE Transactions on Instrumentation and Measurement style: numeric bracketed citations, Roman-numeral primary headings, IEEEtran class notes, mandatory abstract/Index-Terms/Conclusion/Acknowledgment/References/Biographies order, first-footnote pattern, mandatory AI-disclosure block, pre-submission checklist. Read when targeting IEEE TIM (or as a starting point for other IEEE Transactions).
-- `references/journal-wrr.md` — Water Resources Research (AGU/Wiley) style: mandatory 3-bullet Key Points (≤140 chars), Plain Language Summary, unnumbered headings, AGU author-date citations with full italic journal names.
-- `references/journal-jhydrol.md` — Journal of Hydrology (Elsevier) style: mandatory Highlights (3–5 bullets, ≤85 chars), trailing-full-stop numbered headings, Elsevier Harvard citations, CRediT. **Distinct from JHRS** — check which title the user means.
-- `references/journal-hess.md` — Hydrology and Earth System Sciences (EGU/Copernicus) style: 300-word abstract, Copernicus colon-after-authors year-last reference format, "Figure N" not "Fig. N", mandatory Data and Code availability sections.
-- `references/journal-groundwater.md` — Groundwater (NGWA/Wiley) style: ~6,000-word concise format, unnumbered headings, HJ-style no-comma Harvard citations, practitioner-facing register.
-- `references/journal-generic.md` — field-agnostic baseline for any other quantitative-science journal: IMRaD structure, standard scientific tense, SI units, sequential numbering, mandatory Limitations subsection. Defers to the target journal's author guidelines on points that genuinely vary (citation style, word limits, abstract format, first-person policy). Read when the user selects `generic`.
-- `references/preset-example.md` — Draft-mode fast-path preset **template**. Defines the structure of a project preset: detection trigger, data files to cache, fixed project facts (study area, period, CRS, model variants, parameter counts, classification rules, thresholds, optimiser), abbreviations, mandatory limitations, Semantic Scholar queries per section, forbidden content, candidate figure pool, mandatory tables. Copy to `references/preset-<your-project>.md` (or symlink from `.local/`) and fill in the placeholders to enable workspace-based fast-path detection.
-- `references/preset-demo.md` — Synthetic demo preset used by the bundled try-it examples in `examples/`. Auto-detected from the demo workspace. Safe to delete in a real project.
-- `references/mode-review.md` — Review mode: reviewer feedback rubric and report format.
-- `references/mode-revise.md` — Revise mode: section-by-section suggestion format, reviewer-comment mapping, response letter drafting.
-- `references/mode-proofread.md` — Proofread mode: allowed/forbidden edit scope, language and style compliance pass.
-- `references/mode-audit.md` — Audit mode: end-to-end consistency and coherence checks across the manuscript, severity-tagged report.
+- `references/anti-fabrication.md`: when in doubt, ask or flag, never invent. The most important rule in the skill. Read before any work in any mode.
+- `references/anti-summary-rules.md`: write prose not outlines. Read before every Draft-mode writing session and before any Revise-mode proposed revision.
+- `references/anti-ai-style.md`: write like a human, not like an AI. Read before every Draft-mode and Revise-mode writing session, and consulted by Proofread mode for compliance checks.
+- `references/introduction-structure.md`: the five-move funnel for Introduction sections (broad significance → narrowing review → gap → objectives → roadmap). Read before drafting or revising any Introduction.
+- `references/reproducibility.md`: Methods replicability standard, Data Availability and Code Availability statements, CRediT taxonomy, Conflict of Interest, Funding. Read when drafting Methods or back matter, and when reviewing/revising.
+- `references/submission-format.md`: the presentation layer editorial offices enforce and author guides omit: continuous line numbers, page numbers, double spacing, single column, and the separate-file rules for highlights and graphical abstracts. Carries the governing rule that guide silence is not evidence that nothing is required. Read before any readiness claim and before every export, in every mode.
+- `references/manuscript-docx-style.md`: canonical Word-output formatting spec: TNR coercion, Springer-style tables, mean ± std merging, TIFF figures, OMML equations, citeproc citations, and the reproducible `pandoc → python-docx post-process` pipeline. Read during Export to .docx.
+- `references/startup-interview.md`: mode selection, exact startup questions, fast-path rules.
+- `references/journal-hydrogeology.md`: HJ style, structure, citation format, pre-submission checklist.
+- `references/journal-jhrs.md`: JHRS style, structured abstract, highlights, Elsevier reference format, pre-submission checklist.
+- `references/journal-engineering-geology.md`: Engineering Geology (Elsevier) style: scope gate, structure, author-year citations, Elsevier back matter and declarations, pre-submission checklist.
+- `references/journal-jmbe.md`: Journal of Medical and Biological Engineering (Springer) style: scope, structure, Springer author-year citations, pre-submission checklist.
+- `references/journal-physiological-measurement.md`: Physiological Measurement (IOP/IPEM) style: scope naming AI/ML for physiological signals, mandatory Objective/Approach/Main results/Significance abstract, 8000-word research paper, IOP Harvard author-year citations with unpunctuated `et al`, lowercase "figure 1"/"table 1", COI and funding inside Acknowledgments, ScholarOne portal, pre-submission checklist.
+- `references/journal-tim.md`: IEEE Transactions on Instrumentation and Measurement style: numeric bracketed citations, Roman-numeral primary headings, IEEEtran class notes, mandatory abstract/Index-Terms/Conclusion/Acknowledgment/References/Biographies order, first-footnote pattern, mandatory AI-disclosure block, pre-submission checklist. Read when targeting IEEE TIM (or as a starting point for other IEEE Transactions).
+- `references/journal-wrr.md`: Water Resources Research (AGU/Wiley) style, verified against AGU's text requirements: mandatory Key Points (one to three, ≤140 chars, no abbreviations), abstract under 250 words, numbered headings, length in publication units, mandatory Open Research section, AGU author-date citations.
+- `references/journal-jhydrol.md`: Journal of Hydrology (Elsevier) style: mandatory Highlights (3–5 bullets, ≤85 chars), trailing-full-stop numbered headings, Elsevier Harvard citations, CRediT. **Distinct from JHRS**: check which title the user means.
+- `references/journal-hess.md`: Hydrology and Earth System Sciences (EGU/Copernicus) style, verified against the Copernicus submission guidelines: no stated abstract or body word limit, mandatory 500-character short summary, Copernicus colon-after-authors year-last reference format, mandatory Data availability, Code availability, Author contribution and Competing interests sections.
+- `references/journal-groundwater.md`: Groundwater (NGWA/Wiley) style: ~6,000-word concise format, unnumbered headings, HJ-style no-comma Harvard citations, practitioner-facing register.
+- `references/journal-generic.md`: field-agnostic baseline for any other quantitative-science journal: IMRaD structure, standard scientific tense, SI units, sequential numbering, mandatory Limitations subsection. Defers to the target journal's author guidelines on points that genuinely vary (citation style, word limits, abstract format, first-person policy). Read when the user selects `generic`.
+- `references/preset-example.md`: Draft-mode fast-path preset **template**. Defines the structure of a project preset: detection trigger, data files to cache, fixed project facts (study area, period, CRS, model variants, parameter counts, classification rules, thresholds, optimiser), abbreviations, mandatory limitations, Semantic Scholar queries per section, forbidden content, candidate figure pool, mandatory tables. Copy to `references/preset-<your-project>.md` (or symlink from `.local/`) and fill in the placeholders to enable workspace-based fast-path detection.
+- `references/preset-demo.md`: Synthetic demo preset used by the bundled try-it examples in `examples/`. Auto-detected from the demo workspace. Safe to delete in a real project.
+- `references/mode-review.md`: Review mode: reviewer feedback rubric and report format.
+- `references/mode-revise.md`: Revise mode: section-by-section suggestion format, reviewer-comment mapping, response letter drafting.
+- `references/mode-proofread.md`: Proofread mode: allowed/forbidden edit scope, language and style compliance pass.
+- `references/mode-audit.md`: Audit mode: end-to-end consistency and coherence checks across the manuscript, severity-tagged report.
+- `references/mode-format.md`: Format mode: bring an existing .docx to submission-ready presentation for a named journal, build the required separate files, and report compliance in two layers. Changes presentation only, never text.
 
 Read reference files lazily, only loading what the current mode and session need.
